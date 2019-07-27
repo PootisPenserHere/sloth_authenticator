@@ -20,6 +20,8 @@ services:
     build: database
     env_file:
       - .env
+    volumes:
+      - ~/.volumes/auth_service/postgres:/var/lib/postgresql/data
   pgadmin:
     image: fenglc/pgadmin4:python2.7-alpine
     container_name: auth_service_pgadmin
@@ -35,3 +37,5 @@ services:
     container_name: auth_service_redis
     image: redis:5.0-alpine
     command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - ~/.volumes/auth_service/redis:/data
