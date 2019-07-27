@@ -4,6 +4,6 @@ cd /docker-entrypoint-initdb.d/
 
 find "$PWD" -type f -name "*.sql" | sort | \
 while read l; do
-    # TODO parametrize the database credentials
-    psql -d auth_service -U sloth -f "$d/$l";
+    # The env variables are set by docker-compose and taken from the .env file
+    psql -d $POSTGRES_DB -U $POSTGRES_USER -f "$d/$l";
 done

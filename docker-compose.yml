@@ -6,8 +6,8 @@ services:
     build: .
     ports:
       - ${CONTAINER_PUBLIC_PORT}:${APP_PORT}
-    environment:
-      TZ: America/Mazatlan
+    env_file:
+      - .env
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -18,11 +18,8 @@ services:
     container_name: auth_service_pg
     restart: always
     build: database
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_DB}
-      TZ: ${TIME_ZONE}
+    env_file:
+      - .env
   pgadmin:
     image: fenglc/pgadmin4:python2.7-alpine
     container_name: auth_service_pgadmin
