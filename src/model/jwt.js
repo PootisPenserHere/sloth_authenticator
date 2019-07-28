@@ -1,6 +1,7 @@
 "use strict";
 
 const jwt = require('jsonwebtoken');
+const crytoService = require('../service/crypto');
 
 /**
  * Creates a new jwt signed with a sync hashing algorithm
@@ -16,7 +17,8 @@ const jwt = require('jsonwebtoken');
 async function signNewSyncToken(secret, payload = {}, expirationTimeInSeconds = 0) {
     let options = {
         'expiresIn': expirationTimeInSeconds,
-        'algorithm': 'HS512'
+        'algorithm': process.env.JWT_SYNC_ALGORITH,
+        'jti': await crytoService.secureRandomString(16)
     };
 
     // TODO wrap in a try catch block
@@ -55,7 +57,8 @@ async function verifySyncToken(token, secret) {
 async function signNewAsyncToken(cert, payload = {}, expirationTimeInSeconds = 0){
     let options = {
         'expiresIn': expirationTimeInSeconds,
-        'algorithm': 'RS512'
+        'algorithm': process.env.JWT_ASYNC_ALGORITH,
+        'jti': await crytoService.secureRandomString(16)
     };
 
     // TODO wrap in a try catch block
