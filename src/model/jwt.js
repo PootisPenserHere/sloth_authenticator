@@ -18,7 +18,8 @@ async function signNewSyncToken(secret, payload = {}, expirationTimeInSeconds = 
     let options = {
         'expiresIn': expirationTimeInSeconds,
         'algorithm': process.env.JWT_SYNC_ALGORITH,
-        'jti': await crytoService.secureRandomString(16)
+        'jti': await crytoService.secureRandomString(16),
+        'iss': process.env.JWT_ISSUER
     };
 
     // TODO wrap in a try catch block
@@ -58,7 +59,8 @@ async function signNewAsyncToken(cert, payload = {}, expirationTimeInSeconds = 0
     let options = {
         'expiresIn': expirationTimeInSeconds,
         'algorithm': process.env.JWT_ASYNC_ALGORITH,
-        'jti': await crytoService.secureRandomString(16)
+        'jti': await crytoService.secureRandomString(16),
+        'iss': process.env.JWT_ISSUER
     };
 
     // TODO wrap in a try catch block
