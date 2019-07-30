@@ -15,7 +15,7 @@ const fs = require('fs');
 async function signSyncToken(payload = {}, expirationTime = 0) {
     try {
         return {
-            "token": await jwt.signNewSyncToken(process.env.JWT_MASTER_SECRET, payload, expirationTime),
+            "token": await jwt.signNewSyncToken(process.env.JWT_SECONDARY_SECRET, payload, expirationTime),
             "status": "success",
             "message": "Token created successfully."
         }
@@ -39,7 +39,7 @@ async function signSyncToken(payload = {}, expirationTime = 0) {
 async function decodeSyncToken(token) {
     try {
         return {
-            "payload": await jwt.verifySyncToken(token, process.env.JWT_MASTER_SECRET),
+            "payload": await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET),
             "status": "success",
             "message": "The token is valid."
         }
