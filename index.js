@@ -7,6 +7,7 @@ const asyncHandler = require('express-async-handler');
 const cors = require('cors');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
+const clientApplication = require('./src/application/client');
 
 const jwtTest = require('./src/model/jwt');
 const fs = require('fs');
@@ -44,6 +45,27 @@ app.get('/',  asyncHandler(async (req, res, next) => {
     };
 
     res.send(response);
+}));
+
+/**
+ * New sync token signing to be used by client applications
+ *
+ * @Endpoint
+ * @param {object} [payload] Contains any data that will be added to the token's payload
+ * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
+ */
+app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
+    res.send( await clientApplication.signSyncToken(req.body.payload, req.body.expirationTime) );
+}));
+
+/**
+ * Decodes a sync token used by a client application
+ *
+ * @Endpoint
+ * @param {string} token The jwt to be validated
+ */
+app.post('/api/sync/decode',  asyncHandler(async (req, res, next) => {
+    res.send( await clientApplication.decodeSyncToken(req.body.token) );
 }));
 
 /*
