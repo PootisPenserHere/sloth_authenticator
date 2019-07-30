@@ -25,28 +25,6 @@ app.options('*', cors());
  */
 app.use(bodyParser.json());
 
-app.get('/',  asyncHandler(async (req, res, next) => {
-    let payload = {
-        "test": "cosa",
-        "int": 111
-    };
-
-    let syncToken = await jwtTest.signNewSyncToken(process.env.JWT_MASTER_SECRET, payload, 600);
-
-    let privateKey = await fs.readFileSync('./keys/id_rsa');
-    let publicKey = await fs.readFileSync('./keys/id_rsa.pub');
-    let asyncToken = await jwtTest.signNewAsyncToken({'key': privateKey, 'passphrase': 'top secret'}, payload, 600);
-
-    let response = {
-        "syncToken": syncToken,
-        "decodedSync": await jwtTest.verifySyncToken(syncToken, process.env.JWT_MASTER_SECRET),
-        "asyncToken": asyncToken,
-        "decodedAsync": await jwtTest.verifySyncToken(asyncToken, publicKey),
-    };
-
-    res.send(response);
-}));
-
 /**
  * New sync token signing to be used by client applications
  *
@@ -66,6 +44,27 @@ app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
  */
 app.post('/api/sync/decode',  asyncHandler(async (req, res, next) => {
     res.send( await clientApplication.decodeSyncToken(req.body.token) );
+}));
+
+/**
+ * New async token signing to be used by client applications
+ *
+ * @Endpoint
+ * @param {object} [payload] Contains any data that will be added to the token's payload
+ * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
+ */
+app.post('/api/async/sign',  asyncHandler(async (req, res, next) => {
+    res.send( await clientApplication.signAsyncToken(req.body.payload, req.body.expirationTime) );
+}));
+
+/**
+ * Decodes an async token used by a client application
+ *
+ * @Endpoint
+ * @param {string} token The jwt to be validated
+ */
+app.post('/api/async/decode',  asyncHandler(async (req, res, next) => {
+    res.send( await clientApplication.decodeAsyncToken(req.body.token) );
 }));
 
 /*
