@@ -7,7 +7,9 @@ const asyncHandler = require('express-async-handler');
 const cors = require('cors');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
+
 const jwtTest = require('./src/model/jwt');
+const fs = require('fs');
 
 const app = express();
 
@@ -30,9 +32,15 @@ app.get('/',  asyncHandler(async (req, res, next) => {
 
     let syncToken = await jwtTest.signNewSyncToken(process.env.JWT_MASTER_SECRET, payload, 600);
 
+    let privateKey = await fs.readFileSync('./keys/id_rsa');
+    let publicKey = await fs.readFileSync('./keys/id_rsa.pub');
+    let asyncToken = await jwtTest.signNewAsyncToken({'key': privateKey, 'passphrase': 'top secret'}, payload, 600);
+
     let response = {
         "syncToken": syncToken,
-        "decodedSync": await jwtTest.verifySyncToken(syncToken, process.env.JWT_MASTER_SECRET)
+        "decodedSync": await jwtTest.verifySyncToken(syncToken, process.env.JWT_MASTER_SECRET),
+        "asyncToken": asyncToken,
+        "decodedAsync": await jwtTest.verifySyncToken(asyncToken, publicKey),
     };
 
     res.send(response);

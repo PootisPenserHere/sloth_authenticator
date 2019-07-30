@@ -58,13 +58,16 @@ async function verifySyncToken(token, secret) {
  * if set to 0 the token won't expire defaults to 0
  * @returns {Promise<string>} A new jwt
  */
-async function signNewAsyncToken(cert, payload = {}, expirationTimeInSeconds = 0){
+async function signNewAsyncToken(cert, payload = {}, expirationTimeInSeconds = 0) {
     let options = {
-        'expiresIn': expirationTimeInSeconds,
         'algorithm': process.env.JWT_ASYNC_ALGORITH,
         'jwtid': await crytoService.secureRandomString(16),
         'issuer': process.env.JWT_ISSUER
     };
+
+    if(expirationTimeInSeconds && Number.isInteger(expirationTimeInSeconds)) {
+        options.expiresIn =  expirationTimeInSeconds;
+    }
 
     // TODO wrap in a try catch block
     return await jwt.sign(payload, cert, options);
