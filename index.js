@@ -9,9 +9,6 @@ const cors = require('cors');
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
 const clientApplication = require('./src/application/client');
 
-const jwtTest = require('./src/model/jwt');
-const fs = require('fs');
-
 const app = express();
 
 /*
