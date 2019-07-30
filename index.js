@@ -7,6 +7,7 @@ const asyncHandler = require('express-async-handler');
 const cors = require('cors');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
+const clientApplication = require('./src/application/client');
 
 const app = express();
 
@@ -21,8 +22,46 @@ app.options('*', cors());
  */
 app.use(bodyParser.json());
 
-app.get('/',  asyncHandler(async (req, res, next) => {
-    res.send('Hello World!');
+/**
+ * New sync token signing to be used by client applications
+ *
+ * @Endpoint
+ * @param {object} [payload] Contains any data that will be added to the token's payload
+ * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
+ */
+app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
+    res.send( await clientApplication.signSyncToken(req.body.payload, req.body.expirationTime) );
+}));
+
+/**
+ * Decodes a sync token used by a client application
+ *
+ * @Endpoint
+ * @param {string} token The jwt to be validated
+ */
+app.post('/api/sync/decode',  asyncHandler(async (req, res, next) => {
+    res.send( await clientApplication.decodeSyncToken(req.body.token) );
+}));
+
+/**
+ * New async token signing to be used by client applications
+ *
+ * @Endpoint
+ * @param {object} [payload] Contains any data that will be added to the token's payload
+ * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
+ */
+app.post('/api/async/sign',  asyncHandler(async (req, res, next) => {
+    res.send( await clientApplication.signAsyncToken(req.body.payload, req.body.expirationTime) );
+}));
+
+/**
+ * Decodes an async token used by a client application
+ *
+ * @Endpoint
+ * @param {string} token The jwt to be validated
+ */
+app.post('/api/async/decode',  asyncHandler(async (req, res, next) => {
+    res.send( await clientApplication.decodeAsyncToken(req.body.token) );
 }));
 
 /*
