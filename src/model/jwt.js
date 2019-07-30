@@ -16,11 +16,14 @@ const crytoService = require('../service/crypto');
  */
 async function signNewSyncToken(secret, payload = {}, expirationTimeInSeconds = 0) {
     let options = {
-        'expiresIn': expirationTimeInSeconds,
         'algorithm': process.env.JWT_SYNC_ALGORITH,
-        'jti': await crytoService.secureRandomString(16),
-        'iss': process.env.JWT_ISSUER
+        'jwtid': await crytoService.secureRandomString(16),
+        'issuer': process.env.JWT_ISSUER
     };
+
+    if(expirationTimeInSeconds && Number.isInteger(expirationTimeInSeconds)) {
+        options.expiresIn =  expirationTimeInSeconds;
+    }
 
     // TODO wrap in a try catch block
     return await jwt.sign(payload, secret, options);
@@ -59,8 +62,8 @@ async function signNewAsyncToken(cert, payload = {}, expirationTimeInSeconds = 0
     let options = {
         'expiresIn': expirationTimeInSeconds,
         'algorithm': process.env.JWT_ASYNC_ALGORITH,
-        'jti': await crytoService.secureRandomString(16),
-        'iss': process.env.JWT_ISSUER
+        'jwtid': await crytoService.secureRandomString(16),
+        'issuer': process.env.JWT_ISSUER
     };
 
     // TODO wrap in a try catch block

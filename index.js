@@ -7,6 +7,7 @@ const asyncHandler = require('express-async-handler');
 const cors = require('cors');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
+const jwtTest = require('./src/model/jwt');
 
 const app = express();
 
@@ -22,7 +23,19 @@ app.options('*', cors());
 app.use(bodyParser.json());
 
 app.get('/',  asyncHandler(async (req, res, next) => {
-    res.send('Hello World!');
+    let payload = {
+        "test": "cosa",
+        "int": 111
+    };
+
+    let syncToken = await jwtTest.signNewSyncToken(process.env.JWT_MASTER_SECRET, payload, 600);
+
+    let response = {
+        "syncToken": syncToken,
+        "decodedSync": await jwtTest.verifySyncToken(syncToken, process.env.JWT_MASTER_SECRET)
+    };
+
+    res.send(response);
 }));
 
 /*
