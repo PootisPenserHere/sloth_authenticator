@@ -1,5 +1,11 @@
 "use strict";
 
+/**
+ * Contains the business based logic to handle the third party clients authentication needs
+ *
+ * @module clientApplication
+ */
+
 const jwt = require('../model/jwt');
 const fileService = require('../service/file');
 

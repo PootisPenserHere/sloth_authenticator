@@ -3,15 +3,22 @@
   "version": "1.0.0",
   "description": "Authenticar microservice made in nodejs",
   "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "docs": "node_modules/.bin/jsdoc -c jsdoc.json -r . -t node_modules/docdash"
+  },
   "repository": "git@github.com:PootisPenserHere/nodejs_authenticator_api.git",
   "author": "Jose Pablo Domingo Aramburo Sanchez <jose.domingo@coppel.com>",
   "license": "MIT",
   "private": true,
   "dependencies": {
     "cors": "^2.8.5",
+    "docdash": "^1.1.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
+    "jsdoc": "^3.6.3",
     "jsonwebtoken": "^8.5.1"
   }
 }

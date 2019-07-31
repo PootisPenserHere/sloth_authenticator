@@ -1,0 +1,9 @@
+{
+    "source": {
+        "excludePattern": "/node_modules/|libs"
+    },
+    "plugins": [
+        "plugins/markdown"
+    ]
+}
+

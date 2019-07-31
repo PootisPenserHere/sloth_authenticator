@@ -1,5 +1,11 @@
 "use strict";
 
+/**
+ * Generic service to access cryptography based services
+ *
+ * @module cryptoService
+ */
+
 const crypto = require('crypto');
 
 /**
