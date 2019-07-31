@@ -97,7 +97,25 @@ async function verifyAsyncToken(token, cert) {
     }
 }
 
+/**
+ * Decodes a token without verifying its signature
+ *
+ * @function
+ * @name decodeToken
+ * @param {string} token A jwt to be decoded
+ * @returns {Promise<{header: {alg: string, typ:string}, payload: object, signature: signature}>} Contains the payload, headers and signature of the decoded token
+ */
+async function decodeToken(token) {
+    try {
+        return await jwt.decode(token, {complete: true});
+    } catch(err) {
+        // TODO log the error with more details
+        throw Error("The token is invalid, please login again.");
+    }
+}
+
 module.exports.signNewSyncToken = signNewSyncToken;
 module.exports.verifySyncToken = verifySyncToken;
 module.exports.signNewAsyncToken = signNewAsyncToken;
 module.exports.verifyAsyncToken = verifyAsyncToken;
+module.exports.decodeToken = decodeToken;
