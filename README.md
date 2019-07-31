@@ -114,3 +114,22 @@ Every time this command is run a new image will be created from scratch, to reus
 ```bash
 sudo docker-compose down -v
 ```
+
+## Endpoints
+
+Date is always sent on the body using the header `Content-Type: application/json` unless otherwise state.
+
+### Signing sync token
+
+```text
+POST http://localhost:9099/api/sync/sign
+```
+
+Parameters
+
+```markdown
+| Key            | Type   | Required |  Description                                                                             |
+|----------------|--------|----------|------------------------------------------------------------------------------------------|
+| payload        | Object | No       | Contains any data that will be added to the token's payload                              |
+| expirationTime | Int    | No       | Defines the expiration time of the token, if not sent the token won't have an expiration |
+```
