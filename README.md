@@ -10,6 +10,11 @@
    1. [Preparing the working environment](#preparing-the-working-environment)
    2. [Starting up a new container](#starting-up-a-new-container)
    3. [Stopping the current running containers](#stopping-the-current-running-containers)
+3. [Endpoints](#endpoints)
+   1. [Signing sync token](#signing-sync-token)
+   2. [Verify sync token](#verify-sync-token)
+   3. [Signing async token](#signing-async-token)
+   4. [Verify async token](#verify-async-token)
 
 ## Installing docker in linux
 
@@ -117,7 +122,7 @@ sudo docker-compose down -v
 
 ## Endpoints
 
-Date is always sent on the body using the header `Content-Type: application/json` unless otherwise state.
+Data is always sent on the body using the header `Content-Type: application/json` unless otherwise stated.
 
 ### Signing sync token
 
@@ -127,9 +132,45 @@ POST http://localhost:9099/api/sync/sign
 
 Parameters
 
-```markdown
-| Key            | Type   | Required |  Description                                                                             |
-|----------------|--------|----------|------------------------------------------------------------------------------------------|
-| payload        | Object | No       | Contains any data that will be added to the token's payload                              |
+| Key            | Type   | Required | Description                                                  |
+| -------------- | ------ | -------- | ------------------------------------------------------------ |
+| payload        | Object | No       | Contains any data that will be added to the token's payload  |
 | expirationTime | Int    | No       | Defines the expiration time of the token, if not sent the token won't have an expiration |
+
+### Verify sync token
+
+```text
+POST http://localhost:9099/api/sync/decode
 ```
+
+Parameters
+
+| Key   | Type   | Required | Description             |
+| ----- | ------ | -------- | ----------------------- |
+| token | String | Yes      | The jwt to be validated |
+
+### Signing async token
+
+```text
+POST http://localhost:9099/api/async/sign
+```
+
+Parameters
+
+| Key            | Type   | Required | Description                                                  |
+| -------------- | ------ | -------- | ------------------------------------------------------------ |
+| payload        | Object | No       | Contains any data that will be added to the token's payload  |
+| expirationTime | Int    | No       | Defines the expiration time of the token, if not sent the token won't have an expiration |
+
+### Verify async token
+
+```text
+POST http://localhost:9099/api/async/decode
+```
+
+Parameters
+
+| Key   | Type   | Required | Description             |
+| ----- | ------ | -------- | ----------------------- |
+| token | String | Yes      | The jwt to be validated |
+
