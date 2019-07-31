@@ -1,5 +1,11 @@
 "use strict";
 
+/**
+ * Model that exposes the underlying logic to sign and verify tokens
+ *
+ * @module jwt
+ */
+
 const jwt = require('jsonwebtoken');
 const crytoService = require('../service/crypto');
 

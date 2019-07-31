@@ -1,6 +1,12 @@
 "use strict";
 
 /**
+ * Middleware to control uncaught errors through the application
+ *
+ * @module GenericErrorHandler
+ */
+
+/**
  * A generic error handler to control unhandled exceptions and send the client a response
  * in a json format with appropriate feedback while also logging the error
  *

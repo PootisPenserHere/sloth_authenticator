@@ -66,7 +66,7 @@ app.post('/api/async/decode',  asyncHandler(async (req, res, next) => {
 
 /*
  * Catches any exception that wasn't properly handled by the other processes and returns the user
- * a generic respond while logging the error
+ * a generic response while logging the error
  */
 app.use(genericErrorHandling.handleUnCaughtError);
 

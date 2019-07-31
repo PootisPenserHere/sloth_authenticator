@@ -1,5 +1,11 @@
 "use strict";
 
+/**
+ * Generic service to handle files
+ *
+ * @module fileService
+ */
+
 const fs = require('fs');
 
 /**
