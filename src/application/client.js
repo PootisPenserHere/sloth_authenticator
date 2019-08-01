@@ -8,6 +8,8 @@
 
 const jwt = require('../model/jwt');
 const fileService = require('../service/file');
+const dateService = require('../service/date');
+const redisService = require('../service/redis');
 
 /**
  * New sync token signing to be used by client applications
@@ -44,8 +46,17 @@ async function signSyncToken(payload = {}, expirationTime = 0) {
  */
 async function decodeSyncToken(token) {
     try {
+        let tokenPayload = await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET);
+
+        if(await tokenIsBlocked(tokenPayload.jti)) {
+            return {
+                "status": "error",
+                "message": "The token is invalid."
+            }
+        }
+
         return {
-            "payload": await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET),
+            "payload": tokenPayload,
             "status": "success",
             "message": "The token is valid."
         }
@@ -108,9 +119,17 @@ async function signAsyncToken(payload = {}, expirationTime = 0) {
 async function decodeAsyncToken(token) {
     try {
         let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
+        let tokenPayload = await jwt.verifyAsyncToken(token, cert);
+
+        if(await tokenIsBlocked(tokenPayload.jti)) {
+            return {
+                "status": "error",
+                "message": "The token is invalid."
+            }
+        }
 
         return {
-            "payload": await jwt.verifyAsyncToken(token, cert),
+            "payload": tokenPayload,
             "status": "success",
             "message": "The token is valid."
         }
@@ -123,7 +142,89 @@ async function decodeAsyncToken(token) {
     }
 }
 
+/**
+ * Generates a unique and repeatable string based on the token id to reference the token
+ * being blocked or to find if a token is blocked
+ *
+ * @function
+ * @name blockedTokenCacheKeyGenerator
+ * @param {string} tokenId The id of the token
+ * @returns {Promise<string>} A string to be used as the key to store the blocked token id
+ */
+async function blockedTokenCacheKeyGenerator(tokenId) {
+    return `blacklistedToken-${tokenId}`;
+}
+
+/**
+ * Checks the cache against a given token to determine if the token has been blocked or not
+ *
+ * @function
+ * @name tokenIsNotBlocked
+ * @param {string} tokenId The id of the token
+ * @returns {Promise<boolean>}
+ */
+async function tokenIsBlocked(tokenId) {
+    return !!(await redisService.getKey(await blockedTokenCacheKeyGenerator(tokenId)))
+}
+
+/**
+ * Add a token to the blacklist so that in further requests it won't be accepted as a
+ * valid token even if its attributes and signature are correct
+ *
+ * @function
+ * @name revokeToken
+ * @param {string} token The jwt to be blocked
+ * @returns {Promise<{status: string, message: string}>}
+ */
+async function revokeToken(token) {
+    try {
+        let decodedToken = await jwt.decodeToken(token);
+
+        if(await tokenIsBlocked(decodedToken.payload.jti)) {
+            return {
+                "status": "error",
+                "message": "The token is already blocked."
+            }
+        }
+
+        /*
+         * The tokens are verified based on their signature type this is done to determine
+         * if the token sent is still valid to the system and avoid precessing the ones
+         * that have already expired or have the wrong signature
+         *
+         * As there are different versions of the used algorithms they're validated against
+         * a part of their name, in this case looking for a match of the sync algorithm hs
+         *
+         * The input is ignored as the needed data already exists in the decodedToken variable
+         */
+        if(decodedToken.header.alg.indexOf("HS") > -1) {
+            await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET)
+        } else{
+            let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
+            await jwt.verifyAsyncToken(token, cert);
+        }
+
+        await redisService.setKey(
+            await blockedTokenCacheKeyGenerator(decodedToken.payload.jti),
+            decodedToken.payload.jti,
+            await dateService.secondsLeftTillTimestamp(decodedToken.payload.exp) + 10
+        );
+
+        return {
+            "status": "success",
+            "message": "The token has been added to the blacklist."
+        }
+    } catch (err) {
+        console.log(`error at clientApplication.decodeSyncToken caused by ${err}`);
+        return {
+            "status": "error",
+            "message": "The token is invalid."
+        }
+    }
+}
+
 module.exports.signSyncToken = signSyncToken;
 module.exports.decodeSyncToken = decodeSyncToken;
 module.exports.signAsyncToken = signAsyncToken;
 module.exports.decodeAsyncToken = decodeAsyncToken;
+module.exports.revokeToken = revokeToken;
