@@ -139,6 +139,18 @@ async function blockedTokenCacheKeyGenerator(tokenId) {
 }
 
 /**
+ * Checks the cache against a given token to determine if the token has been blocked or not
+ *
+ * @function
+ * @name tokenIsNotBlocked
+ * @param {string} tokenId The id of the token
+ * @returns {Promise<boolean>}
+ */
+async function tokenIsBlocked(tokenId) {
+    return !!(await redisService.getKey(await blockedTokenCacheKeyGenerator(tokenId)))
+}
+
+/**
  * Add a token to the blacklist so that in further requests it won't be accepted as a
  * valid token even if its attributes and signature are correct
  *
@@ -150,6 +162,13 @@ async function blockedTokenCacheKeyGenerator(tokenId) {
 async function revokeToken(token) {
     try {
         let decodedToken = await jwt.decodeToken(token);
+
+        if(await tokenIsBlocked(decodedToken.payload.jti)) {
+            return {
+                "status": "error",
+                "message": "The token is already blocked."
+            }
+        }
 
         /*
          * The tokens are verified based on their signature type this is done to determine
