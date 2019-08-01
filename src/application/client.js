@@ -46,8 +46,17 @@ async function signSyncToken(payload = {}, expirationTime = 0) {
  */
 async function decodeSyncToken(token) {
     try {
+        let tokenPayload = await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET);
+
+        if(await tokenIsBlocked(tokenPayload.jti)) {
+            return {
+                "status": "error",
+                "message": "The token is invalid."
+            }
+        }
+
         return {
-            "payload": await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET),
+            "payload": tokenPayload,
             "status": "success",
             "message": "The token is valid."
         }
@@ -110,9 +119,17 @@ async function signAsyncToken(payload = {}, expirationTime = 0) {
 async function decodeAsyncToken(token) {
     try {
         let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
+        let tokenPayload = await jwt.verifyAsyncToken(token, cert);
+
+        if(await tokenIsBlocked(tokenPayload.jti)) {
+            return {
+                "status": "error",
+                "message": "The token is invalid."
+            }
+        }
 
         return {
-            "payload": await jwt.verifyAsyncToken(token, cert),
+            "payload": tokenPayload,
             "status": "success",
             "message": "The token is valid."
         }
