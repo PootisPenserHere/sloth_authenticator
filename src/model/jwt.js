@@ -42,7 +42,7 @@ async function signNewSyncToken(secret, payload = {}, expirationTimeInSeconds = 
  * @name verifySyncToken
  * @param {string} token A jwt to be verified
  * @param {string} secret The secret used to sign the token
- * @returns {Promise<boolean>} Will determine if the token is valid or not
+ * @returns {Promise<{iat: int, exp: int, iss: string, jti: string}>}
  */
 async function verifySyncToken(token, secret) {
     try {
@@ -86,7 +86,7 @@ async function signNewAsyncToken(cert, payload = {}, expirationTimeInSeconds = 0
  * @name verifyAsyncToken
  * @param {string} token A jwt to be verified
  * @param {string|Buffer} cert A RSA to be used to sign the key
- * @returns {Promise<boolean>} Will determine if the token is valid or not
+ * @returns {Promise<{iat: int, exp: int, iss: string, jti: string}>}
  */
 async function verifyAsyncToken(token, cert) {
     try {
