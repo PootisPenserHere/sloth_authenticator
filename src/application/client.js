@@ -8,6 +8,8 @@
 
 const jwt = require('../model/jwt');
 const fileService = require('../service/file');
+const dateService = require('../service/date');
+const redisService = require('../service/redis');
 
 /**
  * New sync token signing to be used by client applications
@@ -123,7 +125,44 @@ async function decodeAsyncToken(token) {
     }
 }
 
+async function revokeToken(token) {
+    try {
+        let decodedToken = await jwt.decodeToken(token);
+
+        /*
+         * The tokens are verified based on their signature type this is done to determine
+         * if the token sent is still valid to the system and avoid precessing the ones
+         * that have already expired or have the wrong signature
+         *
+         * The input is ignored as the needed data already exists in the decodedToken variable
+         */
+        if(decodedToken.header.alg.indexOf("HS") > -1) {
+            // For sync tokens
+            await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET)
+        } else{
+            // Async tokens
+            let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
+            await jwt.verifyAsyncToken(token, cert);
+        }
+
+        let timeLeftInSeconds = await dateService.secondsLeftTillTimestamp(decodedToken.payload.exp);
+
+        return {
+            "payload": await jwt.decodeToken(token),
+            "status": "success",
+            "message": "The token is valid."
+        }
+    } catch (err) {
+        console.log(`error at clientApplication.decodeSyncToken caused by ${err}`);
+        return {
+            "status": "error",
+            "message": "The token is invalid."
+        }
+    }
+}
+
 module.exports.signSyncToken = signSyncToken;
 module.exports.decodeSyncToken = decodeSyncToken;
 module.exports.signAsyncToken = signAsyncToken;
 module.exports.decodeAsyncToken = decodeAsyncToken;
+module.exports.revokeToken = revokeToken;

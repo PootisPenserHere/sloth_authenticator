@@ -64,6 +64,10 @@ app.post('/api/async/decode',  asyncHandler(async (req, res, next) => {
     res.send( await clientApplication.decodeAsyncToken(req.body.token) );
 }));
 
+app.post('/api/revoke',  asyncHandler(async (req, res, next) => {
+    res.send( await clientApplication.revokeToken(req.body.token) );
+}));
+
 /*
  * Catches any exception that wasn't properly handled by the other processes and returns the user
  * a generic response while logging the error
