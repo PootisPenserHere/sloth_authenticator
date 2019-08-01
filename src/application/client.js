@@ -125,6 +125,28 @@ async function decodeAsyncToken(token) {
     }
 }
 
+/**
+ * Generates a unique and repeatable string based on the token id to reference the token
+ * being blocked or to find if a token is blocked
+ *
+ * @function
+ * @name blockedTokenCacheKeyGenerator
+ * @param {string} tokenId The id of the token
+ * @returns {Promise<string>} A string to be used as the key to store the blocked token id
+ */
+async function blockedTokenCacheKeyGenerator(tokenId) {
+    return `blacklistedToken-${tokenId}`;
+}
+
+/**
+ * Add a token to the blacklist so that in further requests it won't be accepted as a
+ * valid token even if its attributes and signature are correct
+ *
+ * @function
+ * @name revokeToken
+ * @param {string} token The jwt to be blocked
+ * @returns {Promise<{status: string, message: string}>}
+ */
 async function revokeToken(token) {
     try {
         let decodedToken = await jwt.decodeToken(token);
@@ -134,23 +156,27 @@ async function revokeToken(token) {
          * if the token sent is still valid to the system and avoid precessing the ones
          * that have already expired or have the wrong signature
          *
+         * As there are different versions of the used algorithms they're validated against
+         * a part of their name, in this case looking for a match of the sync algorithm hs
+         *
          * The input is ignored as the needed data already exists in the decodedToken variable
          */
         if(decodedToken.header.alg.indexOf("HS") > -1) {
-            // For sync tokens
             await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET)
         } else{
-            // Async tokens
             let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
             await jwt.verifyAsyncToken(token, cert);
         }
 
-        let timeLeftInSeconds = await dateService.secondsLeftTillTimestamp(decodedToken.payload.exp);
+        await redisService.setKey(
+            await blockedTokenCacheKeyGenerator(decodedToken.payload.jti),
+            decodedToken.payload.jti,
+            await dateService.secondsLeftTillTimestamp(decodedToken.payload.exp) + 10
+        );
 
         return {
-            "payload": await jwt.decodeToken(token),
             "status": "success",
-            "message": "The token is valid."
+            "message": "The token has been added to the blacklist."
         }
     } catch (err) {
         console.log(`error at clientApplication.decodeSyncToken caused by ${err}`);

@@ -103,7 +103,7 @@ async function verifyAsyncToken(token, cert) {
  * @function
  * @name decodeToken
  * @param {string} token A jwt to be decoded
- * @returns {Promise<{header: {alg: string, typ:string}, payload: object, signature: signature}>} Contains the payload, headers and signature of the decoded token
+ * @returns {Promise<{header: {alg: string, typ:string}, payload: {iat: int, exp: int, iss: string, jti: string}, signature: signature}>} Contains the payload, headers and signature of the decoded token
  */
 async function decodeToken(token) {
     try {
