@@ -11,4 +11,4 @@ RUN yarn install && \
     yarn global add nodemon@1.18.11 && \
     yarn cache clean
 
-CMD ["nodemon", "index.js"]
+CMD ["nodemon", "--ignore", "logs/", "index.js"]
