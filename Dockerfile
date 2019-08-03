@@ -1,5 +1,5 @@
 FROM node:10.16-alpine
-LABEL maintainer = "Jose Pablo Domingo Aramburo Sanchez <jose.domingo@coppel.com>"
+LABEL maintainer = "Jose Pablo Domingo Aramburo Sanchez <josepablo.aramburo@laziness.rocks>"
 
 COPY . /usr/src/app
 WORKDIR /usr/src/app

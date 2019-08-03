@@ -9,10 +9,18 @@
 
 const winston = require('winston');
 const { combine, timestamp, label, prettyPrint, printf } = winston.format;
+const httpContext = require('express-http-context');
 require("winston-daily-rotate-file");
 
+const jsonFormatter = (logEntry) => {
+    const base = { timestamp: new Date(), requestId: httpContext.get('requestId') };
+    const json = Object.assign(base, logEntry);
+    logEntry[Symbol.for('message')] = JSON.stringify(json);
+    return logEntry;
+};
+
 const logger = winston.createLogger({
-    format: combine(timestamp(), winston.format.json()),
+    format: winston.format(jsonFormatter)(),
     transports: [
         new winston.transports.DailyRotateFile({
             filename: "sloth_authenticator-%DATE%.log.json",
