@@ -5,10 +5,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const asyncHandler = require('express-async-handler');
 const cors = require('cors');
-const uuid = require('uuid');
-const httpContext = require('express-http-context');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
+const requestIdGeneratorMiddleware = require('./src/middleware/requestIdGenerator');
 const clientApplication = require('./src/application/client');
 const loggerService = require('./src/service/logger');
 
@@ -25,16 +24,11 @@ app.options('*', cors());
  */
 app.use(bodyParser.json());
 
-app.use(httpContext.middleware);
-// Run the context for each request. Assign a unique identifier to each request
-app.use(function(req, res, next) {
-    httpContext.ns.bindEmitter(req);
-    httpContext.ns.bindEmitter(res);
-    let requestId = req.headers["x-request-id"] || uuid.v4();
-    httpContext.set("requestId", requestId);
-    console.log('request Id set is: ', httpContext.get('requestId'));
-    next();
-});
+/*
+ * Run the context for each request. Assign a unique identifier to each request
+ */
+app.use(requestIdGeneratorMiddleware.httpContext);
+app.use(requestIdGeneratorMiddleware.assignIdToIncomingRequest);
 
 /**
  * New sync token signing to be used by client applications
@@ -44,8 +38,7 @@ app.use(function(req, res, next) {
  * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
  */
 app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
-    loggerService.logger.info("yhiiii");
-    loggerService.logger.warn("yeeet");
+    loggerService.logger.info("Test");
     res.send( await clientApplication.signSyncToken(req.body.payload, req.body.expirationTime) );
 }));
 
