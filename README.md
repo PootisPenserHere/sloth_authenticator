@@ -2,25 +2,58 @@
 
 [![Build Status](https://travis-ci.org/PootisPenserHere/sloth_authenticator.svg?branch=master)](https://travis-ci.org/PootisPenserHere/sloth_authenticator)
 
+A nodejs and express api to sign and validate json web tokens in a microservice environment
+
 ## Table of content
 
-1. [Installing docker in linux](#installing-docker-in-linux)
+1. [Getting started](#getting-started)
+2. [Installing docker in linux](#installing-docker-in-linux)
    1. [Ubuntu 16](#in-ubuntu-16)
    2. [Ubuntu 18](#in-ubuntu-18)
    3. [Docker compose](#docker-compose)
-2. [Running the project](#running-the-project)
+3. [Running the project](#running-the-project)
    1. [Preparing the working environment](#preparing-the-working-environment)
    2. [Starting up a new container](#starting-up-a-new-container)
    3. [Stopping the current running containers](#stopping-the-current-running-containers)
-3. [Endpoints](#endpoints)
+4. [Endpoints](#endpoints)
    1. [Signing sync token](#signing-sync-token)
    2. [Verify sync token](#verify-sync-token)
    3. [Signing async token](#signing-async-token)
    4. [Verify async token](#verify-async-token)
 
+
+
+## Getting started
+
+Installing the dependencies
+
+```bash
+yarn install
+```
+
+The project may be run with
+
+```bash
+yarn start
+```
+
+to initialize the api using nodejs, alternatively to run with nodemon
+
+```bash
+yarn dev
+```
+
+Documentation for the project can be generated with
+
+```bash
+yarn docs
+```
+
+
+
 ## Installing docker in linux
 
-Eor more information check the [install guide](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+For more information check the [install guide](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 
 ### In ubuntu 16
 
