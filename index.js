@@ -5,9 +5,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const asyncHandler = require('express-async-handler');
 const cors = require('cors');
+const url = require('url');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
+const requestIdGeneratorMiddleware = require('./src/middleware/requestIdGenerator');
 const clientApplication = require('./src/application/client');
+const loggerService = require('./src/service/logger');
 
 const app = express();
 
@@ -22,6 +25,12 @@ app.options('*', cors());
  */
 app.use(bodyParser.json());
 
+/*
+ * Run the context for each request. Assign a unique identifier to each request
+ */
+app.use(requestIdGeneratorMiddleware.httpContext);
+app.use(requestIdGeneratorMiddleware.assignIdToIncomingRequest);
+
 /**
  * New sync token signing to be used by client applications
  *
@@ -30,6 +39,7 @@ app.use(bodyParser.json());
  * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
  */
 app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
+    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.signSyncToken(req.body.payload, req.body.expirationTime) );
 }));
 
@@ -40,6 +50,7 @@ app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
  * @param {string} token The jwt to be validated
  */
 app.post('/api/sync/decode',  asyncHandler(async (req, res, next) => {
+    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.decodeSyncToken(req.body.token) );
 }));
 
@@ -51,6 +62,7 @@ app.post('/api/sync/decode',  asyncHandler(async (req, res, next) => {
  * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
  */
 app.post('/api/async/sign',  asyncHandler(async (req, res, next) => {
+    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.signAsyncToken(req.body.payload, req.body.expirationTime) );
 }));
 
@@ -61,10 +73,20 @@ app.post('/api/async/sign',  asyncHandler(async (req, res, next) => {
  * @param {string} token The jwt to be validated
  */
 app.post('/api/async/decode',  asyncHandler(async (req, res, next) => {
+    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.decodeAsyncToken(req.body.token) );
 }));
 
+/**
+ * Add a token to the blacklist so that in further requests it won't be accepted as a
+ * valid token even if its attributes and signature are correct
+ *
+ * @Endpoint
+ * @param {string} token The jwt to be blocked
+ * @returns {Promise<{status: string, message: string}>}
+ */
 app.post('/api/revoke',  asyncHandler(async (req, res, next) => {
+    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.revokeToken(req.body.token) );
 }));
 

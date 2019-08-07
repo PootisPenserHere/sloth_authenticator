@@ -10,6 +10,7 @@ const jwt = require('../model/jwt');
 const fileService = require('../service/file');
 const dateService = require('../service/date');
 const redisService = require('../service/redis');
+const loggerService = require('../service/logger');
 
 /**
  * New sync token signing to be used by client applications
@@ -28,7 +29,7 @@ async function signSyncToken(payload = {}, expirationTime = 0) {
             "message": "Token created successfully."
         }
     } catch (err) {
-        console.log(`error at clientApplication.signSyncToken caused by ${err}`);
+        loggerService.logger.error(`error at clientApplication.signSyncToken caused by ${err}`);
         return {
             "status": "error",
             "message": "There was an error creating the token, if the problem persist contact the system administrator."
@@ -61,7 +62,7 @@ async function decodeSyncToken(token) {
             "message": "The token is valid."
         }
     } catch (err) {
-        console.log(`error at clientApplication.decodeSyncToken caused by ${err}`);
+        loggerService.logger.error(`error at clientApplication.decodeSyncToken caused by ${err}`);
         return {
             "status": "error",
             "message": "The token is invalid."
@@ -100,7 +101,7 @@ async function signAsyncToken(payload = {}, expirationTime = 0) {
             "message": "Token created successfully."
         }
     } catch (err) {
-        console.log(`error at clientApplication.signAsyncToken caused by ${err}`);
+        loggerService.logger.error(`error at clientApplication.signAsyncToken caused by ${err}`);
         return {
             "status": "error",
             "message": "There was an error creating the token, if the problem persist contact the system administrator."
@@ -134,7 +135,7 @@ async function decodeAsyncToken(token) {
             "message": "The token is valid."
         }
     } catch (err) {
-        console.log(`error at clientApplication.decodeAsyncToken caused by ${err}`);
+        loggerService.logger.error(`error at clientApplication.decodeAsyncToken caused by ${err}`);
         return {
             "status": "error",
             "message": "The token is invalid."
@@ -215,7 +216,7 @@ async function revokeToken(token) {
             "message": "The token has been added to the blacklist."
         }
     } catch (err) {
-        console.log(`error at clientApplication.decodeSyncToken caused by ${err}`);
+        loggerService.logger.error(`error at clientApplication.decodeSyncToken caused by ${err}`);
         return {
             "status": "error",
             "message": "The token is invalid."
