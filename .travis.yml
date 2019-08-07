@@ -14,7 +14,8 @@ services:
 install:
 - echo Entering install stage ...
 - SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c1-7)
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- docker --version
+- echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
 
 script:
 - echo Entering execution stage ...
