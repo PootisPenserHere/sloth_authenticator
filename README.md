@@ -1,4 +1,6 @@
-# nodejs_authenticator_api
+# sloth_authenticator
+
+[![Build Status](https://travis-ci.org/PootisPenserHere/sloth_authenticator.svg?branch=master)](https://travis-ci.org/PootisPenserHere/sloth_authenticator)
 
 ## Table of content
 
@@ -109,7 +111,7 @@ The resulting keys should be saved in the `./keys` directory, while the name giv
 This command will build a new image where the code will be compiled and run from the resulting jar, a mysql database will be created to alongside
 
 ```bash
-sudo docker-compose up --build -d
+docker-compose up --build -d
 ```
 
 Every time this command is run a new image will be created from scratch, to reuse the previous built images run withtout the --buid flag
@@ -117,7 +119,7 @@ Every time this command is run a new image will be created from scratch, to reus
 ### Stopping the current running containers
 
 ```bash
-sudo docker-compose down -v
+docker-compose down -v
 ```
 
 ## Endpoints
@@ -127,7 +129,7 @@ Data is always sent on the body using the header `Content-Type: application/json
 ### Signing sync token
 
 ```text
-POST http://localhost:9099/api/sync/sign
+POST /api/sync/sign
 ```
 
 Parameters
@@ -140,7 +142,7 @@ Parameters
 ### Verify sync token
 
 ```text
-POST http://localhost:9099/api/sync/decode
+POST /api/sync/decode
 ```
 
 Parameters
@@ -152,7 +154,7 @@ Parameters
 ### Signing async token
 
 ```text
-POST http://localhost:9099/api/async/sign
+POST /api/async/sign
 ```
 
 Parameters
@@ -165,7 +167,7 @@ Parameters
 ### Verify async token
 
 ```text
-POST http://localhost:9099/api/async/decode
+POST /api/async/decode
 ```
 
 Parameters
@@ -173,4 +175,3 @@ Parameters
 | Key   | Type   | Required | Description             |
 | ----- | ------ | -------- | ----------------------- |
 | token | String | Yes      | The jwt to be validated |
-
