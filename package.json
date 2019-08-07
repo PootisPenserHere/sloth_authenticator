@@ -14,16 +14,19 @@
   "private": true,
   "dependencies": {
     "cors": "^2.8.5",
-    "docdash": "^1.1.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
     "express-http-context": "^1.2.3",
     "ioredis": "^4.11.2",
-    "jsdoc": "^3.6.3",
     "jsonwebtoken": "^8.5.1",
     "uuid": "^3.3.2",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
+  },
+  "devDependencies": {
+    "docdash": "^1.1.1",
+    "jsdoc": "^3.6.3",
+    "nodemon": "^1.19.1"
   }
 }
