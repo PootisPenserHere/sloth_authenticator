@@ -1,10 +1,7 @@
 language: node_js
 
 node_js:
-- "8"
 - "10"
-- "11"
-- "12"
 
 sudo: true
 
@@ -15,6 +12,8 @@ install:
 - echo Entering install stage ...
 - SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c1-7)
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- yarn install
+- yarn test
 
 script:
 - echo Entering execution stage ...
