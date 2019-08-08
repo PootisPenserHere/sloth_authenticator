@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "mocha",
+    "test": "mocha --recursive",
     "coverage": "nyc yarn test && ./node_modules/.bin/codecov",
     "docs": "node_modules/.bin/jsdoc -c jsdoc.json -r . -t node_modules/docdash"
   },
