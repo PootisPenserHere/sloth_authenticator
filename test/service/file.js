@@ -1,11 +1,20 @@
-const chai = require('chai');
+const assert = require('chai').assert;
+
 const fileService = require('../../src/service/file');
 
-const assert = chai.assert;
+describe('src.service.file.readFile()', function() {
+    let fileData;
 
-describe('readFile()', function() {
     it('Reads the license at the root of the project and returns its contents as a buffer', async function() {
-        let fileData = await fileService.readFile('./LICENSE');
+        fileData = await fileService.readFile('./LICENSE');
         assert.isNotNull(fileData);
+    });
+
+    it('Searches the read file for a common string "Copyright" found in most licenses', async function() {
+        assert.include(fileData.toString(), 'Copyright')
+    });
+
+    it('Checks that the file read is a buffer', async function() {
+        assert.instanceOf(fileData, Buffer);
     });
 });
