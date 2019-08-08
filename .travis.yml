@@ -14,6 +14,7 @@ install:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - yarn install
 - yarn test
+- yarn coverage
 
 script:
 - echo Entering execution stage ...
