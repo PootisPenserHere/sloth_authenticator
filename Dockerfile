@@ -8,7 +8,8 @@ WORKDIR /usr/src/app
 RUN apk add --no-cache tzdata
 
 RUN yarn install --production=true && \
-    yarn global add nodemon@1.18.11 && \
+    #yarn global add nodemon@1.18.11 && \
     yarn cache clean
 
-CMD ["nodemon", "--ignore", "logs/", "index.js"]
+#CMD ["yarn", "dev"]
+CMD ["yarn", "start"]
