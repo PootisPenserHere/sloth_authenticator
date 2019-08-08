@@ -7,11 +7,9 @@ WORKDIR /usr/src/app
 # So that the timezone can be sent with the TZ environment
 RUN apk add --no-cache tzdata
 
-RUN yarn install && \
+RUN yarn install --production=true && \
     #yarn global add nodemon@1.18.11 && \
-    yarn test && \
-    yarn install --production=true && \
     yarn cache clean
 
-#CMD ["nodemon", "--ignore", "logs/", "index.js"]
-CMD ["node", "index.js"]
+#CMD ["yarn", "dev"]
+CMD ["yarn", "start"]
