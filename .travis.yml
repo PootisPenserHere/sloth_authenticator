@@ -13,6 +13,7 @@ install:
 - SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c1-7)
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - yarn install
+- yarn test
 - yarn coverage
 
 script:
