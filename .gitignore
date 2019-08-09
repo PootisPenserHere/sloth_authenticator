@@ -71,3 +71,8 @@ out/
 
 # Mac
 *.DS_Store
+
+# Test coverage
+.nyc_output
+coverage
+*.lcov

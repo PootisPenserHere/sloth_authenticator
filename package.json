@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon --ignore logs/ index.js",
-    "test": "mocha --recursive",
-    "coverage": "nyc yarn test && ./node_modules/.bin/codecov",
+    "test": "nyc mocha --recursive",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && ./node_modules/.bin/codecov",
     "docs": "node_modules/.bin/jsdoc -c jsdoc.json -r . -t node_modules/docdash"
   },
   "repository": "git@github.com:PootisPenserHere/nodejs_authenticator_api.git",
