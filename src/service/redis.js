@@ -25,6 +25,13 @@ redis.on("error", function (err) {
 });
 
 /**
+ * Closes the redis connection
+ */
+function closeConnection() {
+    redis.disconnect();
+}
+
+/**
  * Creates a new key in redis with a default time to live and the option to
  * set a custom time
  *
@@ -165,6 +172,7 @@ async function decrementKeyValue(key, decrement=1) {
     }
 }
 
+module.exports.closeConnection = closeConnection;
 module.exports.setKey = setKey;
 module.exports.setJsonKey = setJsonKey;
 module.exports.getKey = getKey;
