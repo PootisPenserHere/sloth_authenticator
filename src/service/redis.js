@@ -47,6 +47,7 @@ async function setKey(key, value, ttl=process.env.REDIS_DEFAULT_TTL) {
     try {
         return await redis.set(key, value, 'EX', ttl);
     } catch(err) {
+        /* istanbul ignore next */
         console.log(`error on redis.setKey() caused by ${err}`);
         throw Error("An error occurred while saving to cache, please contact the system administrator.");
     }
@@ -81,6 +82,7 @@ async function getKey(key) {
     try {
         return await redis.get(key);
     } catch(err) {
+        /* istanbul ignore next */
         console.log(`error on redis.getKey() caused by ${err}`);
         throw Error("An error occurred while retrieving from cache, please contact the system administrator.");
     }
@@ -113,6 +115,7 @@ async function deleteKey(key) {
     try {
         return await redis.del(key);
     } catch(err) {
+        /* istanbul ignore next */
         console.log(`error on redis.deleteKey() caused by ${err}`);
         throw Error("An error occurred while deleting from cache, please contact the system administrator.");
     }
@@ -130,6 +133,7 @@ async function getTtl(key) {
     try {
         return await redis.ttl(key);
     } catch(err) {
+        /* istanbul ignore next */
         console.log(`error on redis.getTtl() caused by ${err}`);
         throw Error("An error occurred while getting the ttl of a key from cache, please contact the system administrator.");
     }
