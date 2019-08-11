@@ -11,16 +11,15 @@ services:
 
 before_install:
 - echo Entering before install stage ...
-- cp .env.ci .env
 - sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass '123abc456'
 
 install:
 - echo Entering install stage ...
 - yarn install
+- yarn test
 
 script:
 - echo Entering execution stage ...
-- yarn test
 - yarn coverage
 - SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c1-7)
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
