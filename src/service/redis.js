@@ -20,6 +20,7 @@ redis.on("connect", function () {
     console.log(`successfully connected to the redis server at ${process.env.REDIS_HOST}`);
 });
 
+/* istanbul ignore next */
 redis.on("error", function (err) {
     console.log(`an error occurred while trying to connect to redis caused by: ${err}`);
 });
