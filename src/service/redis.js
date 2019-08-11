@@ -134,44 +134,6 @@ async function getTtl(key) {
     }
 }
 
-/**
- * Increases the value of an key by one, if the key doesn't exist it'll be created, initialized at zero and then
- * be incremented, resulting in a 1
- *
- * @function
- * @name increaseKeyValue
- * @param {string} key Name of the key to modify
- * @param increment {int} multiplier for the increment, defaults to 1
- * @returns {Promise<int>} The new value after the increment
- */
-async function increaseKeyValue(key, increment=1) {
-    try {
-        return await redis.incr(key, increment);
-    } catch(err) {
-        console.log(`error on redis.increaseKeyValue() caused by ${err}`);
-        throw Error("An error occurred while increasing counter from cache, please contact the system administrator.");
-    }
-}
-
-/**
- * Decreases the value of a key by one, if the key doesn't exist it'll be created, initialized at zero and then
- * decreased resulting in a negative number being returned
- *
- * @function
- * @name decrementKeyValue
- * @param {string} key Name of the key to modify
- * @param {int} decrement Amount to decrement to the value, defaults to 1
- * @returns {Promise<int>} The value after the decrement
- */
-async function decrementKeyValue(key, decrement=1) {
-    try {
-        return await redis.decr(key, decrement)
-    } catch(err) {
-        console.log(`error on redis.decrementKeyValue() caused by ${err}`);
-        throw Error("An error occurred while decreasing counter from cache, please contact the system administrator.");
-    }
-}
-
 module.exports.closeConnection = closeConnection;
 module.exports.setKey = setKey;
 module.exports.setJsonKey = setJsonKey;
@@ -179,5 +141,3 @@ module.exports.getKey = getKey;
 module.exports.getJsonKey = getJsonKey;
 module.exports.deleteKey = deleteKey;
 module.exports.getTtl = getTtl;
-module.exports.increaseKeyValue = increaseKeyValue;
-module.exports.decrementKeyValue = decrementKeyValue;

@@ -13,6 +13,7 @@ let keyWithTtl = 'keyWithTtl';
 let ttl = 10;
 let stringValue = 'random value!';
 let objectValue = {'one': 1, 'string': 'thing'};
+let countKey = 'count';
 
 describe('src.service.redis.setKey()', function() {
     it('Saves a string in redis, it should have the default ttl', async function () {
