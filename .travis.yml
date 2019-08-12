@@ -7,16 +7,22 @@ sudo: true
 
 services:
 - docker
+- redis-server
+
+before_install:
+- echo Entering before install stage ...
+- sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass '123abc456'
 
 install:
 - echo Entering install stage ...
-- SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c1-7)
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - yarn install
-- yarn coverage
+- yarn test
 
 script:
 - echo Entering execution stage ...
+- yarn coverage
+- SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c1-7)
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - sudo docker build -t $REPOSITORY_URI:latest -f Dockerfile .
 - sudo docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$SHORT_COMMIT_HASH
 - echo Pushing the Docker images ...
