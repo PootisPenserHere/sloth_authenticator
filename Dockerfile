@@ -13,4 +13,6 @@ RUN yarn install && \
 # Default user with lower privileges
 USER node
 
+HEALTHCHECK --interval=10s --timeout=2s --start-period=15s CMD node ./healthcheck.js
+
 CMD ["node", "index.js"]
