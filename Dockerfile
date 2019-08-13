@@ -10,7 +10,7 @@ RUN apk add --no-cache tzdata
 RUN yarn install && \
     yarn cache clean
 
+# Default user with lower privileges
 USER node
 
-#CMD ["yarn", "dev"]
-CMD ["yarn", "start"]
+CMD ["node", "index.js"]
