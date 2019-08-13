@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const asyncHandler = require('express-async-handler');
 const cors = require('cors');
 const url = require('url');
+const mung = require('express-mung');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
 const requestIdGeneratorMiddleware = require('./src/middleware/requestIdGenerator');
@@ -30,6 +31,12 @@ app.use(bodyParser.json());
  */
 app.use(requestIdGeneratorMiddleware.httpContext);
 app.use(requestIdGeneratorMiddleware.assignIdToIncomingRequest);
+
+/*
+ * Reads the status sent as string in the json response and changes the http status
+ * to 500 if the current code is 200
+ */
+app.use(mung.json(genericErrorHandling.handledErrorReturnCode500));
 
 app.get('/',  asyncHandler(async (req, res, next) => {
     res.send("sloth_authenticator");

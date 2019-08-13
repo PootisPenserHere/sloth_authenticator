@@ -32,4 +32,19 @@ function handleUnCaughtError (err, req, res, next) {
     return;
 }
 
+/**
+ * Reads the status sent as string in the json response and changes the http status
+ * to 500 if the current code is 200
+ *
+ * @param body
+ * @param req
+ * @param res
+ */
+function handledErrorReturnCode500 (body, req, res) {
+    if(res.statusCode === 200 && body.status === 'error') {
+        res.status(500);
+    }
+}
+
 module.exports.handleUnCaughtError = handleUnCaughtError;
+module.exports.handledErrorReturnCode500 = handledErrorReturnCode500;
