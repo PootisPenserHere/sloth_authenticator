@@ -1,5 +1,7 @@
 "use strict";
 
+const loggerService = require('../service/logger');
+
 /**
  * Middleware to control uncaught errors through the application
  *
@@ -19,11 +21,12 @@
  * @param next
  */
 function handleUnCaughtError (err, req, res, next) {
-    console.log(`got an uncaught error caused by: ${err.stack}`);
+    loggerService.logger.error(`got an uncaught error caused by: ${err.stack}`);
 
     res.status(500).send({
         "status": "error",
-        "message": err.message
+        "message": "An unexpected error occurred while processing the request, if the problem persists " +
+            "contact the system administrator"
     });
 
     return;
