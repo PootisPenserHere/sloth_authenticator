@@ -20,6 +20,7 @@
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
     "express-http-context": "^1.2.3",
+    "express-mung": "^0.5.1",
     "ioredis": "^4.11.2",
     "jsonwebtoken": "^8.5.1",
     "uuid": "^3.3.2",
