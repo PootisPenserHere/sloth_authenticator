@@ -12,6 +12,10 @@ const loggerService = require('../service/logger');
  * A generic error handler to control unhandled exceptions and send the client a response
  * in a json format with appropriate feedback while also logging the error
  *
+ * Errors of the type AssertionError will be allowed through this handler and their message relied
+ * to the client, any other error will be replaced with a generic message to avoid filtering
+ * sensitive data
+ *
  * NOTE in the case of async functions a middleware will be required so that the error to
  * this handler, express-async-handler is suggested
  *
@@ -25,7 +29,9 @@ function handleUnCaughtError (err, req, res, next) {
 
     res.status(500).send({
         "status": "error",
-        "message": "An unexpected error occurred while processing the request, if the problem persists " +
+        "message": err.name === 'AssertionError'
+            ? err.message
+            : "An unexpected error occurred while processing the request, if the problem persists " +
             "contact the system administrator"
     });
 

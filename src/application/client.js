@@ -6,6 +6,8 @@
  * @module clientApplication
  */
 
+const assert = require('chai').assert;
+
 const jwt = require('../model/jwt');
 const fileService = require('../service/file');
 const dateService = require('../service/date');
@@ -22,6 +24,9 @@ const loggerService = require('../service/logger');
  * @returns {Promise<{token: string, status: string, message, string}|{status: string, message, string}>}
  */
 async function signSyncToken(payload = {}, expirationTime = 0) {
+    await assert.isNotNull(payload, "The payload shouldn't be null");
+    await assert.isAtLeast(expirationTime, 0, "The expirationTime must be set to 0 or higher");
+
     try {
         return {
             "token": await jwt.signNewSyncToken(process.env.JWT_SECONDARY_SECRET, payload, expirationTime),
@@ -46,6 +51,9 @@ async function signSyncToken(payload = {}, expirationTime = 0) {
  * @returns {Promise<{payload: string, status: string, message: string}|{status: string, message: string}>}
  */
 async function decodeSyncToken(token) {
+    await assert.isNotNull(token, "The token shouldn't be null");
+    await assert.isNotEmpty(token, "The token shouldn't be empty");
+
     try {
         let tokenPayload = await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET);
 
@@ -80,6 +88,9 @@ async function decodeSyncToken(token) {
  * @returns {Promise<{token: string, status: string, message, string}|{status: string, message, string}>}
  */
 async function signAsyncToken(payload = {}, expirationTime = 0) {
+    await assert.isNotNull(payload, "The payload shouldn't be null");
+    await assert.isAtLeast(expirationTime, 0, "The expirationTime must be set to 0 or higher");
+
     try {
         /*
          * If the rsa key has been encrypted the sign method will take the key and its passphrase
@@ -118,6 +129,9 @@ async function signAsyncToken(payload = {}, expirationTime = 0) {
  * @returns {Promise<{payload: string, status: string, message: string}|{status: string, message: string}>}
  */
 async function decodeAsyncToken(token) {
+    await assert.isNotNull(token, "The token shouldn't be null");
+    await assert.isNotEmpty(token, "The token shouldn't be empty");
+
     try {
         let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
         let tokenPayload = await jwt.verifyAsyncToken(token, cert);
@@ -153,6 +167,10 @@ async function decodeAsyncToken(token) {
  * @returns {Promise<string>} A string to be used as the key to store the blocked token id
  */
 async function blockedTokenCacheKeyGenerator(tokenId) {
+    await assert.isString(tokenId, "The token id (jti) should be a string");
+    await assert.isNotNull(tokenId, "The token id (jti) shouldn't be null");
+    await assert.isNotEmpty(tokenId, "The token id (jti) shouldn't be empty");
+    
     return `blacklistedToken-${tokenId}`;
 }
 
@@ -165,6 +183,10 @@ async function blockedTokenCacheKeyGenerator(tokenId) {
  * @returns {Promise<boolean>}
  */
 async function tokenIsBlocked(tokenId) {
+    await assert.isString(tokenId, "The token id (jti) should be a string");
+    await assert.isNotNull(tokenId, "The token id (jti) shouldn't be null");
+    await assert.isNotEmpty(tokenId, "The token id (jti) shouldn't be empty");
+
     return !!(await redisService.getKey(await blockedTokenCacheKeyGenerator(tokenId)))
 }
 
@@ -178,6 +200,9 @@ async function tokenIsBlocked(tokenId) {
  * @returns {Promise<{status: string, message: string}>}
  */
 async function revokeToken(token) {
+    await assert.isNotNull(token, "The token shouldn't be null");
+    await assert.isNotEmpty(token, "The token shouldn't be empty");
+
     try {
         let decodedToken = await jwt.decodeToken(token);
 
