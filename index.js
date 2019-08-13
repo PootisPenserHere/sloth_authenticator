@@ -31,6 +31,10 @@ app.use(bodyParser.json());
 app.use(requestIdGeneratorMiddleware.httpContext);
 app.use(requestIdGeneratorMiddleware.assignIdToIncomingRequest);
 
+app.get('/',  asyncHandler(async (req, res, next) => {
+    res.send("sloth_authenticator");
+}));
+
 /**
  * New sync token signing to be used by client applications
  *

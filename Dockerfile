@@ -7,9 +7,12 @@ WORKDIR /usr/src/app
 # So that the timezone can be sent with the TZ environment
 RUN apk add --no-cache tzdata
 
-RUN yarn install --production=true && \
-    #yarn global add nodemon@1.18.11 && \
+RUN yarn install && \
     yarn cache clean
 
-#CMD ["yarn", "dev"]
-CMD ["yarn", "start"]
+# Default user with lower privileges
+USER node
+
+HEALTHCHECK --interval=10s --timeout=2s --start-period=15s CMD node ./healthcheck.js
+
+CMD ["node", "index.js"]
