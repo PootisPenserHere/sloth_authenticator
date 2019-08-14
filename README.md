@@ -1,6 +1,6 @@
 # sloth_authenticator
 
-[![Build Status](https://travis-ci.org/PootisPenserHere/sloth_authenticator.svg?branch=master)](https://travis-ci.org/PootisPenserHere/sloth_authenticator) [![codecov](https://codecov.io/gh/PootisPenserHere/sloth_authenticator/branch/master/graph/badge.svg)](https://codecov.io/gh/PootisPenserHere/sloth_authenticator)
+[![Build Status](https://travis-ci.org/PootisPenserHere/sloth_authenticator.svg?branch=master)](https://travis-ci.org/PootisPenserHere/sloth_authenticator) [![codecov](https://codecov.io/gh/PootisPenserHere/sloth_authenticator/branch/master/graph/badge.svg)](https://codecov.io/gh/PootisPenserHere/sloth_authenticator) [![Maintainability](https://api.codeclimate.com/v1/badges/1d34f86a9d070a81675a/maintainability)](https://codeclimate.com/github/PootisPenserHere/sloth_authenticator/maintainability)
 
 A nodejs and express api to sign and validate json web tokens in a microservice environment
 
@@ -208,4 +208,3 @@ Parameters
 | Key   | Type   | Required | Description             |
 | ----- | ------ | -------- | ----------------------- |
 | token | String | Yes      | The jwt to be validated |
-
