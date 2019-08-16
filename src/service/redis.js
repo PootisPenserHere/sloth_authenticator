@@ -25,8 +25,6 @@ redis.on("error", function (err) {
     console.log(`an error occurred while trying to connect to redis caused by: ${err}`);
 });
 
-// TODO removed the ignore test flags and tests the catch code blocks
-
 /**
  * Closes the redis connection
  */
@@ -46,14 +44,7 @@ function closeConnection() {
  * @returns {Promise<string>}
  */
 async function setKey(key, value, ttl=process.env.REDIS_DEFAULT_TTL) {
-    try {
-        return await redis.set(key, value, 'EX', ttl);
-    } catch(err) {
-        /* istanbul ignore next */
-        console.log(`error on redis.setKey() caused by ${err}`);
-        /* istanbul ignore next */
-        throw Error("An error occurred while saving to cache, please contact the system administrator.");
-    }
+    return await redis.set(key, value, 'EX', ttl);
 }
 
 /**
@@ -82,14 +73,7 @@ async function setJsonKey(key, value, ttl=process.env.REDIS_DEFAULT_TTL) {
  * @returns {Promise<string|null>} The value of the key or null if not found
  */
 async function getKey(key) {
-    try {
-        return await redis.get(key);
-    } catch(err) {
-        /* istanbul ignore next */
-        console.log(`error on redis.getKey() caused by ${err}`);
-        /* istanbul ignore next */
-        throw Error("An error occurred while retrieving from cache, please contact the system administrator.");
-    }
+    return await redis.get(key);
 }
 
 /**
@@ -116,14 +100,7 @@ async function getJsonKey(key) {
  * @returns {Promise<string>}
  */
 async function deleteKey(key) {
-    try {
-        return await redis.del(key);
-    } catch(err) {
-        /* istanbul ignore next */
-        console.log(`error on redis.deleteKey() caused by ${err}`);
-        /* istanbul ignore next */
-        throw Error("An error occurred while deleting from cache, please contact the system administrator.");
-    }
+    return await redis.del(key);
 }
 
 /**
@@ -135,14 +112,7 @@ async function deleteKey(key) {
  * @returns {Promise<int>} Remaining time in seconds for the key to stay in cache
  */
 async function getTtl(key) {
-    try {
-        return await redis.ttl(key);
-    } catch(err) {
-        /* istanbul ignore next */
-        console.log(`error on redis.getTtl() caused by ${err}`);
-        /* istanbul ignore next */
-        throw Error("An error occurred while getting the ttl of a key from cache, please contact the system administrator.");
-    }
+    return await redis.ttl(key);
 }
 
 module.exports.closeConnection = closeConnection;
