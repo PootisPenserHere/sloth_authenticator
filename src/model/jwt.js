@@ -8,6 +8,7 @@
 
 const jwt = require('jsonwebtoken');
 const crytoService = require('../service/crypto');
+const loggerService = require('../service/logger');
 
 /**
  * Creates a new jwt signed with a sync hashing algorithm
@@ -31,7 +32,6 @@ async function signNewSyncToken(secret, payload = {}, expirationTimeInSeconds = 
         options.expiresIn =  expirationTimeInSeconds;
     }
 
-    // TODO wrap in a try catch block
     return await jwt.sign(payload, secret, options);
 }
 
@@ -48,8 +48,8 @@ async function verifySyncToken(token, secret) {
     try {
         return await jwt.verify(token, secret);
     } catch(err) {
-        // TODO log the error with more details
-        throw Error("The token is invalid, please login again.");
+        loggerService.logger.error(err);
+        throw Error("The token is invalid.");
     }
 }
 
@@ -75,7 +75,6 @@ async function signNewAsyncToken(cert, payload = {}, expirationTimeInSeconds = 0
         options.expiresIn =  expirationTimeInSeconds;
     }
 
-    // TODO wrap in a try catch block
     return await jwt.sign(payload, cert, options);
 }
 
@@ -92,8 +91,8 @@ async function verifyAsyncToken(token, cert) {
     try {
         return await jwt.verify(token, cert);
     } catch(err) {
-        // TODO log the error with more details
-        throw Error("The token is invalid, please login again.");
+        loggerService.logger.error(err);
+        throw Error("The token is invalid");
     }
 }
 
@@ -109,7 +108,7 @@ async function decodeToken(token) {
     try {
         return await jwt.decode(token, {complete: true});
     } catch(err) {
-        // TODO log the error with more details
+        loggerService.logger.error(err);
         throw Error("The token is invalid, please login again.");
     }
 }
