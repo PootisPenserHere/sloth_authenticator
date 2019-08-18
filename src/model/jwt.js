@@ -3,7 +3,7 @@
 /**
  * Model that exposes the underlying logic to sign and verify tokens
  *
- * @module jwt
+ * @module jwtModel
  */
 
 const jwt = require('jsonwebtoken');
@@ -36,24 +36,6 @@ async function signNewSyncToken(secret, payload = {}, expirationTimeInSeconds = 
 }
 
 /**
- * Uses the given secret to verify that the jwt is valid
- *
- * @function
- * @name verifySyncToken
- * @param {string} token A jwt to be verified
- * @param {string} secret The secret used to sign the token
- * @returns {Promise<{iat: int, exp: int, iss: string, jti: string}>}
- */
-async function verifySyncToken(token, secret) {
-    try {
-        return await jwt.verify(token, secret);
-    } catch(err) {
-        loggerService.logger.error(err);
-        throw Error("The token is invalid.");
-    }
-}
-
-/**
  * Creates a new jwt signed with an async hashing algorithm
  *
  * @function
@@ -79,17 +61,18 @@ async function signNewAsyncToken(cert, payload = {}, expirationTimeInSeconds = 0
 }
 
 /**
- * Uses the given cert to verify that the jwt is valid
+ * Takes a secret in the form of a buffer for async tokens or a string for sync tokens and
+ * attempts to verify the signature of the given token
  *
  * @function
  * @name verifyAsyncToken
  * @param {string} token A jwt to be verified
- * @param {string|Buffer} cert A RSA to be used to sign the key
+ * @param {string|Buffer} secret To be used to verify the signature, a RSA cert for async tokens or a passphrase for sync tokens
  * @returns {Promise<{iat: int, exp: int, iss: string, jti: string}>}
  */
-async function verifyAsyncToken(token, cert) {
+async function verifyToken(token, secret) {
     try {
-        return await jwt.verify(token, cert);
+        return await jwt.verify(token, secret);
     } catch(err) {
         loggerService.logger.error(err);
         throw Error("The token is invalid");
@@ -114,7 +97,6 @@ async function decodeToken(token) {
 }
 
 module.exports.signNewSyncToken = signNewSyncToken;
-module.exports.verifySyncToken = verifySyncToken;
 module.exports.signNewAsyncToken = signNewAsyncToken;
-module.exports.verifyAsyncToken = verifyAsyncToken;
+module.exports.verifyToken = verifyToken;
 module.exports.decodeToken = decodeToken;

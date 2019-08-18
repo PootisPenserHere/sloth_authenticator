@@ -8,7 +8,7 @@
 
 const assert = require('chai').assert;
 
-const jwt = require('../model/jwt');
+const jwtModel = require('../model/jwt');
 const blacklistModel = require('../model/blacklist');
 const fileService = require('../service/file');
 const loggerService = require('../service/logger');
@@ -28,7 +28,7 @@ async function signSyncToken(payload = {}, expirationTime = 0) {
 
     try {
         return {
-            "token": await jwt.signNewSyncToken(process.env.JWT_SECONDARY_SECRET, payload, expirationTime),
+            "token": await jwtModel.signNewSyncToken(process.env.JWT_SECONDARY_SECRET, payload, expirationTime),
             "status": "success",
             "message": "Token created successfully."
         }
@@ -70,7 +70,7 @@ async function signAsyncToken(payload = {}, expirationTime = 0) {
         }
 
         return {
-            "token": await jwt.signNewAsyncToken(cert, payload, expirationTime),
+            "token": await jwtModel.signNewAsyncToken(cert, payload, expirationTime),
             "status": "success",
             "message": "Token created successfully."
         }
@@ -97,7 +97,7 @@ async function decodeToken(token) {
     await assert.isNotNull(token, "The token shouldn't be null");
     await assert.isNotEmpty(token, "The token shouldn't be empty");
 
-    let decodedToken = await jwt.decodeToken(token);
+    let decodedToken = await jwtModel.decodeToken(token);
     let tokenPayload;
 
     /*
@@ -109,10 +109,10 @@ async function decodeToken(token) {
      * a part of their name, in this case looking for a match of the sync algorithm hs
      */
     if(decodedToken.header.alg.indexOf("HS") > -1) {
-        tokenPayload = await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET)
+        tokenPayload = await jwtModel.verifyToken(token, process.env.JWT_SECONDARY_SECRET)
     } else{
         let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
-        tokenPayload = await jwt.verifyAsyncToken(token, cert);
+        tokenPayload = await jwtModel.verifyToken(token, cert);
     }
 
     return tokenPayload;
