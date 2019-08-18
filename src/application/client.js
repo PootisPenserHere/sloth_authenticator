@@ -158,6 +158,45 @@ async function decodeAsyncToken(token) {
 }
 
 /**
+ * Will decode a jwt regardless of the signature strategy and return its payload on
+ * success
+ *
+ * @function
+ * @name verifyToken
+ * @param {string} token The jwt to be verified
+ * @returns {Promise<{iat: int, exp: int, iss: string, jti: string}>}
+ * @throws {JsonWebTokenError|NotBeforeError|TokenExpiredError}
+ */
+async function verifyToken(token) {
+    await assert.isNotNull(token, "The token shouldn't be null");
+    await assert.isNotEmpty(token, "The token shouldn't be empty");
+
+    try {
+        let decodedToken = await jwt.decodeToken(token);
+        let tokenPayload;
+
+        /*
+         * The tokens are verified based on their signature type this is done to determine
+         * if the token sent is still valid to the system and avoid precessing the ones
+         * that have already expired or have the wrong signature
+         *
+         * As there are different versions of the used algorithms they're validated against
+         * a part of their name, in this case looking for a match of the sync algorithm hs
+         */
+        if(decodedToken.header.alg.indexOf("HS") > -1) {
+            tokenPayload = await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET)
+        } else{
+            let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
+            tokenPayload = await jwt.verifyAsyncToken(token, cert);
+        }
+
+        return tokenPayload;
+    } catch(err) {
+        loggerService.logger.error(`error at clientApplication.verifyToken caused by ${err}`);
+    }
+}
+
+/**
  * Generates a unique and repeatable string based on the token id to reference the token
  * being blocked or to find if a token is blocked
  *
@@ -204,36 +243,21 @@ async function revokeToken(token) {
     await assert.isNotEmpty(token, "The token shouldn't be empty");
 
     try {
-        let decodedToken = await jwt.decodeToken(token);
+        let decodedToken = await verifyToken(token);
 
-        if(await tokenIsBlocked(decodedToken.payload.jti)) {
+        console.log(decodedToken.jti)
+
+        if(await tokenIsBlocked(decodedToken.jti)) {
             return {
                 "status": "error",
                 "message": "The token is already blocked."
             }
         }
 
-        /*
-         * The tokens are verified based on their signature type this is done to determine
-         * if the token sent is still valid to the system and avoid precessing the ones
-         * that have already expired or have the wrong signature
-         *
-         * As there are different versions of the used algorithms they're validated against
-         * a part of their name, in this case looking for a match of the sync algorithm hs
-         *
-         * The input is ignored as the needed data already exists in the decodedToken variable
-         */
-        if(decodedToken.header.alg.indexOf("HS") > -1) {
-            await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET)
-        } else{
-            let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
-            await jwt.verifyAsyncToken(token, cert);
-        }
-
         await redisService.setKey(
-            await blockedTokenCacheKeyGenerator(decodedToken.payload.jti),
-            decodedToken.payload.jti,
-            await dateService.secondsLeftTillTimestamp(decodedToken.payload.exp) + 10
+            await blockedTokenCacheKeyGenerator(decodedToken.jti),
+            decodedToken.jti,
+            await dateService.secondsLeftTillTimestamp(decodedToken.exp) + 10
         );
 
         return {
