@@ -109,10 +109,10 @@ async function decodeToken(token) {
      * a part of their name, in this case looking for a match of the sync algorithm hs
      */
     if(decodedToken.header.alg.indexOf("HS") > -1) {
-        tokenPayload = await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET)
+        tokenPayload = await jwt.verifyToken(token, process.env.JWT_SECONDARY_SECRET)
     } else{
         let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
-        tokenPayload = await jwt.verifyAsyncToken(token, cert);
+        tokenPayload = await jwt.verifyToken(token, cert);
     }
 
     return tokenPayload;
