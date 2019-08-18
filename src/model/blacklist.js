@@ -6,6 +6,7 @@
  *
  * @module blacklistModel
  */
+
 const assert = require('chai').assert;
 const redisService = require('../service/redis');
 const dateService = require('../service/date');
