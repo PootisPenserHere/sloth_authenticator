@@ -3,7 +3,7 @@
 /**
  * Model that exposes the underlying logic to sign and verify tokens
  *
- * @module jwt
+ * @module jwtModel
  */
 
 const jwt = require('jsonwebtoken');
