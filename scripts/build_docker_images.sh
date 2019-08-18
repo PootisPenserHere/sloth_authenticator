@@ -19,6 +19,7 @@ image_version=''
 for x in $(cat VERSION)
 do
     image_version="$image_version$x"
+    echo "$REPOSITORY_URI:$image_version"
     sudo docker tag $REPOSITORY_URI:$image_version
     sudo docker push $REPOSITORY_URI:$image_version
     image_version="$image_version." # Adds a period to separate the sub version on the next iteration
