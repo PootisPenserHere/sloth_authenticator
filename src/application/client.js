@@ -9,9 +9,8 @@
 const assert = require('chai').assert;
 
 const jwt = require('../model/jwt');
+const blacklistModel = require('../model/blacklist');
 const fileService = require('../service/file');
-const dateService = require('../service/date');
-const redisService = require('../service/redis');
 const loggerService = require('../service/logger');
 
 /**
@@ -57,7 +56,7 @@ async function decodeSyncToken(token) {
     try {
         let tokenPayload = await jwt.verifySyncToken(token, process.env.JWT_SECONDARY_SECRET);
 
-        if(await tokenIsBlocked(tokenPayload.jti)) {
+        if(await blacklistModel.lookUpByJti(tokenPayload.jti)) {
             return {
                 "status": "error",
                 "message": "The token is invalid."
@@ -136,7 +135,7 @@ async function decodeAsyncToken(token) {
         let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
         let tokenPayload = await jwt.verifyAsyncToken(token, cert);
 
-        if(await tokenIsBlocked(tokenPayload.jti)) {
+        if(await blacklistModel.lookUpByJti(tokenPayload.jti)) {
             return {
                 "status": "error",
                 "message": "The token is invalid."
@@ -197,39 +196,6 @@ async function verifyToken(token) {
 }
 
 /**
- * Generates a unique and repeatable string based on the token id to reference the token
- * being blocked or to find if a token is blocked
- *
- * @function
- * @name blockedTokenCacheKeyGenerator
- * @param {string} tokenId The id of the token
- * @returns {Promise<string>} A string to be used as the key to store the blocked token id
- */
-async function blockedTokenCacheKeyGenerator(tokenId) {
-    await assert.isString(tokenId, "The token id (jti) should be a string");
-    await assert.isNotNull(tokenId, "The token id (jti) shouldn't be null");
-    await assert.isNotEmpty(tokenId, "The token id (jti) shouldn't be empty");
-    
-    return `blacklistedToken-${tokenId}`;
-}
-
-/**
- * Checks the cache against a given token to determine if the token has been blocked or not
- *
- * @function
- * @name tokenIsNotBlocked
- * @param {string} tokenId The id of the token
- * @returns {Promise<boolean>}
- */
-async function tokenIsBlocked(tokenId) {
-    await assert.isString(tokenId, "The token id (jti) should be a string");
-    await assert.isNotNull(tokenId, "The token id (jti) shouldn't be null");
-    await assert.isNotEmpty(tokenId, "The token id (jti) shouldn't be empty");
-
-    return !!(await redisService.getKey(await blockedTokenCacheKeyGenerator(tokenId)))
-}
-
-/**
  * Add a token to the blacklist so that in further requests it won't be accepted as a
  * valid token even if its attributes and signature are correct
  *
@@ -245,20 +211,14 @@ async function revokeToken(token) {
     try {
         let decodedToken = await verifyToken(token);
 
-        console.log(decodedToken.jti)
-
-        if(await tokenIsBlocked(decodedToken.jti)) {
+        if(await blacklistModel.lookUpByJti(decodedToken.jti)) {
             return {
                 "status": "error",
                 "message": "The token is already blocked."
             }
         }
 
-        await redisService.setKey(
-            await blockedTokenCacheKeyGenerator(decodedToken.jti),
-            decodedToken.jti,
-            await dateService.secondsLeftTillTimestamp(decodedToken.exp) + 10
-        );
+        await blacklistModel.blockTokenByJti(decodedToken.jti, decodedToken.exp);
 
         return {
             "status": "success",
