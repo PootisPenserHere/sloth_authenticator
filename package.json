@@ -23,6 +23,8 @@
     "express-mung": "^0.5.1",
     "ioredis": "^4.11.2",
     "jsonwebtoken": "^8.5.1",
+    "pg": "^7.12.1",
+    "sequelize": "^5.15.1",
     "uuid": "^3.3.2",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
