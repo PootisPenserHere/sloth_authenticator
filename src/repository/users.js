@@ -6,8 +6,6 @@ const postgresService = require('../service/postgres');
 /* istanbul ignore next */
 class User extends Sequelize.Model {}
 
-module.exports.USER_TYPE_MASTER = 'master';
-module.exports.USER_TYPE_SERVICE = 'service';
 module.exports = User.init({
     name: {
         field: 'name',

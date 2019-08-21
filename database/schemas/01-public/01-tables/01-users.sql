@@ -8,7 +8,7 @@ CREATE TABLE public.users (
     id INTEGER NOT NULL DEFAULT nextval('public.users_id'::regclass),
     name character varying(250) NOT NULL DEFAULT '' UNIQUE,
     username character varying(100) NOT NULL DEFAULT '' UNIQUE,
-    password character varying(100) NOT NULL DEFAULT '' UNIQUE,
+    password character varying(100) NOT NULL DEFAULT '',
     access_type public.users_types NOT NULL DEFAULT 'service',
     status public.users_status NOT NULL DEFAULT 'active',
     createdAt TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
