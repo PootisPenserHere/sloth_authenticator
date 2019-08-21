@@ -4,9 +4,9 @@ CREATE TYPE public.users_status AS ENUM ('active', 'inactive');
 
 CREATE TABLE public.users (
     id INTEGER NOT NULL DEFAULT nextval('public.users_id'::regclass),
-    name character varying(250) NOT NULL DEFAULT '',
-    username character varying(100) NOT NULL DEFAULT '',
-    password character varying(100) NOT NULL DEFAULT '',
+    name character varying(250) NOT NULL DEFAULT '' UNIQUE,
+    username character varying(100) NOT NULL DEFAULT '' UNIQUE,
+    password character varying(100) NOT NULL DEFAULT '' UNIQUE,
     status public.users_status NOT NULL DEFAULT 'active',
     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
