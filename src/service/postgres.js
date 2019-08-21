@@ -1,5 +1,12 @@
 "use strict";
 
+/**
+ * The connection to the postgres database, this service exposes the connection object
+ * and implements a connection pool for the object to be used through the app
+ *
+ * @module postgresService
+ */
+
 const Sequelize = require('sequelize');
 
 const connection = new Sequelize({
@@ -16,10 +23,6 @@ const connection = new Sequelize({
         min: 0,
         idle: 10000
     },
-});
-
-connection.query("SELECT 1 AS cosas").then(results => {
-    console.log(results);
 });
 
 module.exports.connection = connection;

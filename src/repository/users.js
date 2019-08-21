@@ -1,9 +1,9 @@
 "use strict";
 
 const Sequelize = require('sequelize');
-
 const postgresService = require('../service/postgres');
 
+/* istanbul ignore next */
 class User extends Sequelize.Model {}
 
 module.exports = User.init({
