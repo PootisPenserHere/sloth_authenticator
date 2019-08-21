@@ -2,7 +2,7 @@
 
 const Sequelize = require('sequelize');
 
-const postgresqlService = require('../service/postgresql');
+const postgresService = require('../service/postgres');
 
 class User extends Sequelize.Model {}
 
@@ -30,7 +30,7 @@ module.exports = User.init({
         type: Sequelize.ENUM('active', 'inactive'),
     },
 }, {
-    sequelize: postgresqlService.connection,
+    sequelize: postgresService.connection,
     timestamps:false, // This are handled by the database
     modelName: 'user'
 });

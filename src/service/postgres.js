@@ -2,12 +2,12 @@
 
 const Sequelize = require('sequelize');
 
-const connection = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+const connection = new Sequelize({
     host: process.env.POSTGRES_HOST,
     port: process.env.POSTGRES_PORT,
-    //username: process.env.POSTGRES_USER,
-    //password: process.env.POSTGRES_PASSWORD,
-    //database: process.env.POSTGRES_DB,
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
     dialect: 'postgres',
     //timezone: '-7',
 
