@@ -11,8 +11,8 @@ CREATE TABLE public.users (
     password character varying(100) NOT NULL DEFAULT '' UNIQUE,
     access_type public.users_types NOT NULL DEFAULT 'service',
     status public.users_status NOT NULL DEFAULT 'active',
-    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    createdAt TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
