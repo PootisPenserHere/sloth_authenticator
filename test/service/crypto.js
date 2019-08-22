@@ -22,3 +22,29 @@ describe('src.service.crypto.secureRandomString()', function() {
         assert.isAtLeast(data.length, 32);
     });
 });
+
+
+describe('src.service.crypto.hashPassword()', function() {
+    it('Hashes a string with bcrypt, should return a string', async function() {
+        let data = await cryptoService.hashPassword('cosa');
+        assert.isNotNull(data);
+        assert.isString(data);
+        assert.isAtLeast(data.length, 6); // The first 6 characters define the algorithm version and salt cost
+    });
+});
+
+describe('src.service.crypto.verifyHashedPassword()', function() {
+    it('Compares a hashed password against its plain text equivalent, should return true', async function() {
+        let hashed = await cryptoService.hashPassword('cosa');
+        let data = await cryptoService.verifyHashedPassword('cosa', hashed);
+        assert.isNotNull(data);
+        assert.isTrue(data);
+    });
+
+    it('Compares a hashed password against an invalid plain text string, should return false', async function() {
+        let hashed = await cryptoService.hashPassword('cosa');
+        let data = await cryptoService.verifyHashedPassword('thing', hashed);
+        assert.isNotNull(data);
+        assert.isFalse(data);
+    });
+});
