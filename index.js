@@ -12,6 +12,7 @@ const genericErrorHandling = require('./src/middleware/genericErrorHandler');
 const requestIdGeneratorMiddleware = require('./src/middleware/requestIdGenerator');
 const clientApplication = require('./src/application/client');
 const loggerService = require('./src/service/logger');
+const userModel = require('./src/model/user');
 
 const app = express();
 
@@ -108,6 +109,7 @@ app.post('/api/revoke',  asyncHandler(async (req, res, next) => {
 app.use(genericErrorHandling.handleUnCaughtError);
 
 app.listen(process.env.APP_PORT, function () {
+    userModel.initializeUsers();
     console.log(`App listening on port ${process.env.APP_PORT}!`);
 });
 
