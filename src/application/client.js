@@ -28,7 +28,7 @@ async function signSyncToken(payload = {}, expirationTime = 0) {
 
     try {
         return {
-            "token": await jwtModel.signNewSyncToken(process.env.JWT_SECONDARY_SECRET, payload, expirationTime),
+            "token": await jwtModel.signNewToken(process.env.JWT_SECONDARY_SECRET, payload, expirationTime),
             "status": "success",
             "message": "Token created successfully."
         }
@@ -70,7 +70,7 @@ async function signAsyncToken(payload = {}, expirationTime = 0) {
         }
 
         return {
-            "token": await jwtModel.signNewAsyncToken(cert, payload, expirationTime),
+            "token": await jwtModel.signNewToken(cert, payload, expirationTime),
             "status": "success",
             "message": "Token created successfully."
         }
