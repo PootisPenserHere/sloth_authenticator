@@ -2,6 +2,8 @@
 
 # Tags and deploys images with the code version once they're deemed stable
 # this is intended to run when merged to the master branch
+sudo docker push $REPOSITORY_URI:latest
+
 OIFS=$IFS # Backups the current field separator
 IFS='-' # Change the field separator for the one needed to parse the version
 image_version=''
