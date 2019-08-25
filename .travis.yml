@@ -23,13 +23,15 @@ install:
 script:
 - echo Entering execution stage ...
 - yarn coverage
-- echo Pushing the Docker images ...
+
+before_deployment:
+- echo Entering before deployment stage ...
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - ./scripts/build_docker_image.sh
 
 deploy:
   provider: script
   skip_cleanup: true
-  script: bash scripts/deploy_hash_version_to_docker.sh
+  script: bash ./scripts/deploy_hash_version_to_docker.sh
   on:
     all_branches: true
