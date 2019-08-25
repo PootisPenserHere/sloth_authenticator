@@ -1,18 +1,9 @@
 #!/usr/bin/env bash
 
-# Logging into thr docker registry
-echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-
-# Building the image
-sudo docker build -t $REPOSITORY_URI:latest -f Dockerfile .
-
-# Tagging and pushing the image with the shortened commit hash and as latest
-SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c1-7)
-sudo docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$SHORT_COMMIT_HASH
+# Tags and deploys images with the code version once they're deemed stable
+# this is intended to run when merged to the master branch
 sudo docker push $REPOSITORY_URI:latest
-sudo docker push $REPOSITORY_URI:$SHORT_COMMIT_HASH
 
-# Tagging and pushing the images by build version
 OIFS=$IFS # Backups the current field separator
 IFS='-' # Change the field separator for the one needed to parse the version
 image_version=''
