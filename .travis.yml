@@ -38,3 +38,4 @@ deploy:
   script: bash ./scripts/deploy_hash_version_to_docker.sh
   on:
     all_branches: true
+    node_js: '10'
