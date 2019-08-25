@@ -39,3 +39,9 @@ deploy:
   on:
     all_branches: true
     node_js: '10'
+- provider: script
+  skip_cleanup: true
+  script: bash ./scripts/deploy_stable_versions_to_docker.sh
+  on:
+    branch: master
+    node_js: '10'
