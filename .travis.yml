@@ -29,6 +29,7 @@ script:
 
 deploy:
   provider: script
+  skip_cleanup: true
   script: ./scripts/deploy_hash_version_to_docker.sh
   on:
     all_branches: true
