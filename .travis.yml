@@ -24,4 +24,11 @@ script:
 - echo Entering execution stage ...
 - yarn coverage
 - echo Pushing the Docker images ...
-- ./scripts/build_docker_images.sh
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- ./scripts/build_docker_image.sh
+
+deploy:
+  provider: script
+  script: ./scripts/deploy_hash_version_to_docker.sh
+  on:
+    all_branches: true
