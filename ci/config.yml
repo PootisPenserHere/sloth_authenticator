@@ -1,0 +1,50 @@
+service:
+  crawler:
+    name: crawlerApi
+    user: sloth_crawler
+    password: 12345678
+  emailSender:
+    name: emailSenderApi
+    user: sloth_mailer
+    password: 87654321
+clientTypes:
+  crawler:
+    - api
+    - frontEnd
+  emailSender:
+    - mailer
+accessPrivileges:
+  crawler:
+    - start
+    - listJobs
+  emailSender:
+    - send
+    - massSend
+    - read
+accessPrivilegesPerUserType:
+  crawler:
+    api:
+      - start
+      - listJobs
+    frontEnd:
+      - listJobs
+  emailSender:
+    mailer:
+      - send
+      - massSend
+      - read
+clients:
+  crawler:
+    - slothens:
+        name: slothens
+        user: slothens
+        password: abc
+    - sirSlothsAlot:
+        name: sirSlothsAlot
+        user: sirSlothsAlot
+        password: cba
+  emailSender:
+    - slothyMail:
+        name: slothyMail
+        user: slothyMail
+        password: 123
