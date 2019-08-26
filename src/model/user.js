@@ -31,38 +31,27 @@ async function numberOfExistingMasterUsers() {
 }
 
 /**
- * Bootstrapping method to create the necessary users and align access rights when the authenticator
- * is launched
- *
- * This will only run when no master user doesn't exist in the database as this indicates that the
- * system hasn't yet been initialized
+ * Create a new user
  *
  * @function
- * @name initializeUsers
- * @returns {Promise<void>}
+ * @name save
+ * @param {string} name Name or description for the user
+ * @param {string} username The public identifier with which the user will authenticate
+ * @param {string} plaintextPassword Plain text password for the user
+ * @param {string} accessType The type of user matching one of src/domain/constant/user
+ * @returns {Promise<*>}
  */
-async function initializeUsers() {
-    if(!await numberOfExistingMasterUsers()) {
-        let masterUser = process.env.MASTER_USER || await cryptoService.secureRandomString(10);
-        let masterPassword = process.env.MASTER_PASSWORD || await cryptoService.secureRandomString(10);
+async function save(name, username, plaintextPassword, accessType) {
+    let securedMasterPassword = await cryptoService.hashPassword(plaintextPassword);
 
-        let securedMasterPassword = await cryptoService.hashPassword(masterPassword);
-
-        await usersRepository.build({
-            name: 'Master user',
-            username: masterUser,
-            password: securedMasterPassword,
-            accessType: userConstants.USER_TYPE_MASTER
-        })
-            .save();
-
-        /*
-         * THis is printed only to console so that the credentials aren't saved in the log files
-         * or other logging platforms
-         */
-        console.log(`created the master user: "${masterUser}" with the password: "${masterPassword}"`)
-    }
+    return await usersRepository.build({
+        name: name,
+        username: username,
+        password: securedMasterPassword,
+        accessType: accessType
+    })
+        .save();
 }
 
 module.exports.numberOfExistingMasterUsers = numberOfExistingMasterUsers;
-module.exports.initializeUsers = initializeUsers;
+module.exports.save = save;

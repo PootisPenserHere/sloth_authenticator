@@ -16,6 +16,7 @@ const connection = new Sequelize({
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     dialect: 'postgres',
+    logging: process.env.DEV_MODE === 'true',
     //timezone: '-7',
 
     pool: {

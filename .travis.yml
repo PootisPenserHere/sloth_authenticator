@@ -21,11 +21,10 @@ before_install:
 install:
 - echo Entering install stage ...
 - yarn install
-- yarn test
 
 script:
 - echo Entering execution stage ...
-- yarn coverage
+- yarn test
 
 before_deploy:
 - echo Entering before deployment stage ...
@@ -33,6 +32,12 @@ before_deploy:
 - ./scripts/build_docker_image.sh
 
 deploy:
+- provider: script
+  skip_cleanup: true
+  script: yarn coverage
+  on:
+    all_branches: true
+    node_js: '10'
 - provider: script
   skip_cleanup: true
   script: bash ./scripts/deploy_hash_version_to_docker.sh
