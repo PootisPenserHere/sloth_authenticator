@@ -109,7 +109,13 @@ app.post('/api/revoke',  asyncHandler(async (req, res, next) => {
 app.use(genericErrorHandling.handleUnCaughtError);
 
 app.listen(process.env.APP_PORT, function () {
-    boostrapApplication.initializeUsers();
+    (async() => {
+        await boostrapApplication.initializeUsers();
+    })().catch(err => {
+        loggerService.logger.error(`failed to initialize the database due to ${err}`)
+        process.exit(1);
+    });
+
     console.log(`App listening on port ${process.env.APP_PORT}!`);
 });
 
