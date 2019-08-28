@@ -10,6 +10,28 @@
 const userModel = require('../model/user');
 const userConstants = require('../domain/constant/user');
 const cryptoService = require('../service/crypto');
+const yaml = require('js-yaml');
+
+const fileService = require('../service/file');
+
+/**
+ * Reads the config file that contains the service users, client types, access rights, and
+ * initial client credentials
+ *
+ * @function
+ * @name readConfigFile
+ * @returns {Promise<*>}
+ */
+async function readConfigFile() {
+    let configFile = await fileService.readFile('/authenticator-init/config.yml');
+    let yml = await yaml.safeLoad(configFile, 'utf8');
+    return yml;
+}
+
+async function initializeServices() {
+    let config = await readConfigFile();
+    console.log(JSON.stringify(config))
+}
 
 /**
  * Bootstrapping method to create the necessary users and align access rights when the authenticator
@@ -39,6 +61,8 @@ async function initializeUsers() {
          * or other logging platforms
          */
         console.log(`created the master user: "${masterUser}" with the password: "${masterPassword}"`)
+
+         await initializeServices();
     }
 }
 
