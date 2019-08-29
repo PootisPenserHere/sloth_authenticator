@@ -1,10 +1,8 @@
 service:
-  crawler:
-    name: crawlerApi
+  - name: crawlerApi
     user: sloth_crawler
     password: 12345678
-  emailSender:
-    name: emailSenderApi
+  - name: emailSenderApi
     user: sloth_mailer
     password: 87654321
 clientTypes:

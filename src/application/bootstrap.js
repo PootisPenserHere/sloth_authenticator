@@ -30,7 +30,17 @@ async function readConfigFile() {
 
 async function initializeServices() {
     let config = await readConfigFile();
-    console.log(JSON.stringify(config))
+    let services = config.service;
+
+    for (const service of services) {
+        await userModel.save(
+            service.name.toString(),
+            service.user.toString(),
+            service.password.toString(),
+            userConstants.USER_TYPE_SERVICE
+        );
+    }
+
 }
 
 /**
