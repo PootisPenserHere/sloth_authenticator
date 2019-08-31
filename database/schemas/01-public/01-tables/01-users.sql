@@ -27,8 +27,3 @@ COMMENT on column public.users.status is 'Status of the record';
 COMMENT on column public.users.createdAt is 'Date on which the row was created';
 COMMENT on column public.users.updatedAt is 'Date on which the row was last modified';
 
-CREATE TRIGGER users_update_updatedAt
-    BEFORE UPDATE
-    ON public.users
-    FOR EACH ROW
-    EXECUTE PROCEDURE public.update_updatedAt();
