@@ -8,6 +8,7 @@
  */
 
 const userModel = require('../model/user');
+const clientTypesByServiceModel = require('../model/clientTypesByService');
 const userConstants = require('../domain/constant/user');
 const cryptoService = require('../service/crypto');
 const yaml = require('js-yaml');
@@ -38,8 +39,12 @@ async function readConfigFile() {
  * @returns {Promise<void>}
  */
 async function saveClientTypesByService(idService, userTypes, clients) {
-    console.log(idService);
-    console.log(JSON.stringify(userTypes))
+    for(const userType of userTypes) {
+        let savedUserType = await clientTypesByServiceModel.save(
+            idService,
+            userType.toString(),
+        );
+    }
 }
 
 /**
