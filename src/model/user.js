@@ -39,7 +39,7 @@ async function numberOfExistingMasterUsers() {
  * @param {string} username The public identifier with which the user will authenticate
  * @param {string} plaintextPassword Plain text password for the user
  * @param {string} accessType The type of user matching one of src/domain/constant/user
- * @returns {Promise<*>}
+ * @returns {Promise<{"id": int,"name": string,"username": string,"password": string,"accessType": string,"status": string,"createdat": string,"updatedat": string}>}
  */
 async function save(name, username, plaintextPassword, accessType) {
     let securedMasterPassword = await cryptoService.hashPassword(plaintextPassword);

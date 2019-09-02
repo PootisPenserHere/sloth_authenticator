@@ -24,21 +24,44 @@ const fileService = require('../service/file');
  */
 async function readConfigFile() {
     let configFile = await fileService.readFile('/authenticator-init/config.yml');
-    let yml = await yaml.safeLoad(configFile, 'utf8');
-    return yml;
+    return await yaml.safeLoad(configFile, 'utf8');
 }
 
+/**
+ * Creates the types of client that the service user has as well as their related clients
+ *
+ * @function
+ * @name saveClientTypesByService
+ * @param {int} idService The id of the service user to whom the type of user belongs
+ * @param {list} userTypes A list of strings containing the names of the user types for the service
+ * @param {list} [clients] The initial clients to be crated for the given type of user
+ * @returns {Promise<void>}
+ */
+async function saveClientTypesByService(idService, userTypes, clients) {
+    console.log(idService);
+    console.log(JSON.stringify(userTypes))
+}
+
+/**
+ * Initiates the chain to create the users for the services and their related actions
+ *
+ * @function
+ * @name initializeServices
+ * @returns {Promise<void>}
+ */
 async function initializeServices() {
     let config = await readConfigFile();
-    let services = config.service;
 
-    for (const service of services) {
-        await userModel.save(
+    for (const service of config.service) {
+
+        let savedService = await userModel.save(
             service.name.toString(),
             service.user.toString(),
             service.password.toString(),
             userConstants.USER_TYPE_SERVICE
         );
+
+        await saveClientTypesByService(savedService.id, config["clientTypes"][service.name]);
     }
 
 }
