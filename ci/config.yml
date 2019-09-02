@@ -11,15 +11,7 @@ clientTypes:
     - frontEnd
   emailSenderApi:
     - mailer
-accessPrivileges:
-  crawlerApi:
-    - start
-    - listJobs
-  emailSenderApi:
-    - send
-    - massSend
-    - read
-accessPrivilegesPerUserType:
+accessPrivilegesPerClientType:
   crawlerApi:
     api:
       - start
@@ -33,16 +25,13 @@ accessPrivilegesPerUserType:
       - read
 clients:
   crawlerApi:
-    - slothens:
-        name: slothens
-        user: slothens
-        password: abc
-    - sirSlothsAlot:
-        name: sirSlothsAlot
-        user: sirSlothsAlot
-        password: cba
+    - name: slothens
+      user: slothens
+      password: abc
+    - name: sirSlothsAlot
+      user: sirSlothsAlot
+      password: cba
   emailSenderApi:
-    - slothyMail:
-        name: slothyMail
-        user: slothyMail
-        password: 123
+    - name: slothyMail
+      user: slothyMail
+      password: 123

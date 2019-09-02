@@ -9,6 +9,7 @@
 
 const userModel = require('../model/user');
 const clientTypesByServiceModel = require('../model/clientTypesByService');
+const accessPrivilegesByClientTypeModel = require('../model/accessPrivilegesByClientType');
 const userConstants = require('../domain/constant/user');
 const cryptoService = require('../service/crypto');
 const yaml = require('js-yaml');
@@ -32,18 +33,22 @@ async function readConfigFile() {
  * Creates the types of client that the service user has as well as their related clients
  *
  * @function
- * @name saveClientTypesByService
+ * @name configureService
  * @param {int} idService The id of the service user to whom the type of user belongs
- * @param {list} userTypes A list of strings containing the names of the user types for the service
- * @param {list} [clients] The initial clients to be crated for the given type of user
+ * @param {array} userTypes A list of strings containing the names of the user types for the service
+ * @param {Array.<Object>} [accessRightForService] a list of objects containing the types of access privileges for the client
+ * @param {Array.<Object>} [clients]
  * @returns {Promise<void>}
  */
-async function saveClientTypesByService(idService, userTypes, clients) {
+async function configureService(idService, userTypes, accessRightForService = null, clients = null) {
+    // Save each of the client types for the service
     for(const userType of userTypes) {
-        let savedUserType = await clientTypesByServiceModel.save(
-            idService,
-            userType.toString(),
-        );
+        let savedUserType = await clientTypesByServiceModel.save(idService, userType.toString());
+
+        // Save the access rights for the client type
+        for(const accessRight of accessRightForService[userType]) {
+            let savedAccessPrivilege = await accessPrivilegesByClientTypeModel.save(savedUserType.id, accessRight)
+        }
     }
 }
 
@@ -66,7 +71,11 @@ async function initializeServices() {
             userConstants.USER_TYPE_SERVICE
         );
 
-        await saveClientTypesByService(savedService.id, config["clientTypes"][service.name]);
+        await configureService(
+            savedService.id,
+            config["clientTypes"][service.name],
+            config["accessPrivilegesPerClientType"][service.name]
+        );
     }
 
 }
