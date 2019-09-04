@@ -74,7 +74,8 @@ async function initializeServices() {
         await configureService(
             savedService.id,
             config["clientTypes"][service.name],
-            config["accessPrivilegesPerClientType"][service.name]
+            config["accessPrivilegesPerClientType"][service.name],
+            config["clients"][service.name]
         );
     }
 

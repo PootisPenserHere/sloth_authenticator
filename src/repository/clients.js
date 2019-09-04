@@ -4,9 +4,9 @@ const Sequelize = require('sequelize');
 const postgresService = require('../service/postgres');
 
 /* istanbul ignore next */
-class User extends Sequelize.Model {}
+class Client extends Sequelize.Model {}
 
-module.exports = User.init({
+module.exports = Client.init({
     name: {
         field: 'name',
         type: Sequelize.STRING,
@@ -23,8 +23,8 @@ module.exports = User.init({
         type: Sequelize.STRING,
         notNull: true
     },
-    accessType: {
-        field: 'access_type',
+    idClientType: {
+        field: 'id_client_type',
         type: Sequelize.ENUM('master', 'service'),
     },
     status: {
@@ -33,6 +33,5 @@ module.exports = User.init({
     },
 }, {
     sequelize: postgresService.connection,
-    timestamps:false, // This are handled by the database
-    modelName: 'user'
+    modelName: 'client'
 });
