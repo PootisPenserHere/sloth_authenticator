@@ -28,10 +28,13 @@ clients:
     - name: slothens
       user: slothens
       password: abc
+      type: api
     - name: sirSlothsAlot
       user: sirSlothsAlot
       password: cba
+      type: frontEnd
   emailSenderApi:
     - name: slothyMail
       user: slothyMail
       password: 123
+      type: mailer

@@ -19,7 +19,7 @@ CREATE TABLE public.users (
 CREATE INDEX idx_users_name ON public.users (name);
 CREATE INDEX idx_users_username_password ON public.users (username, password);
 
-COMMENT on column public.users.name is 'Name oe description of the user to aid in its identifying';
+COMMENT on column public.users.name is 'Name or description of the user to aid in its identifying';
 COMMENT on column public.users.username is 'Username to sign in';
 COMMENT on column public.users.password is 'Login password for the user';
 COMMENT on column public.users.access_type is 'The privigile or access right the user has';
