@@ -11,7 +11,7 @@ const mung = require('express-mung');
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
 const requestIdGeneratorMiddleware = require('./src/middleware/requestIdGenerator');
 const clientApplication = require('./src/application/client');
-const boostrapApplication = require('./src/application/bootstrap');
+const bootstrapApplication = require('./src/application/bootstrap');
 const loggerService = require('./src/service/logger');
 
 const app = express();
@@ -110,7 +110,7 @@ app.use(genericErrorHandling.handleUnCaughtError);
 
 app.listen(process.env.APP_PORT, function () {
     (async() => {
-        await boostrapApplication.initializeUsers();
+        await bootstrapApplication.initializeUsers();
     })().catch(err => {
         loggerService.logger.error(`failed to initialize the database due to ${err}`)
         process.exit(1);

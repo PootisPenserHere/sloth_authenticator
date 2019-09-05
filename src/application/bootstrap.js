@@ -35,24 +35,24 @@ async function readConfigFile() {
  * @function
  * @name configureService
  * @param {int} idService The id of the service user to whom the type of user belongs
- * @param {array} userTypes A list of strings containing the names of the user types for the service
+ * @param {array} clientTypes A list of strings containing the names of the user types for the service
  * @param {Array.<Object>} [accessRightForService] a list of objects containing the types of access privileges for the client
  * @param {Array.<Object>} [clients]
  * @returns {Promise<void>}
  */
-async function configureService(idService, userTypes, accessRightForService = null, clients = null) {
+async function configureService(idService, clientTypes, accessRightForService = null, clients = null) {
     // Save each of the client types for the service
-    for(const userType of userTypes) {
-        let savedUserType = await clientTypesByServiceModel.save(idService, userType.toString());
+    for(const clientType of clientTypes) {
+        let savedUserType = await clientTypesByServiceModel.save(idService, clientType.toString());
 
         // Save the access rights for the client type
-        for(const accessRight of accessRightForService[userType]) {
+        for(const accessRight of accessRightForService[clientType]) {
             await accessPrivilegesByClientTypeModel.save(savedUserType.id, accessRight)
         }
 
         // Saving the client as a new user
         for(const client of clients) {
-            if(client.type === userType) {
+            if(client.type === clientType) {
                 await userModel.save(
                     client.name.toString(),
                     client.user.toString(),
