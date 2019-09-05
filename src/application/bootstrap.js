@@ -47,7 +47,19 @@ async function configureService(idService, userTypes, accessRightForService = nu
 
         // Save the access rights for the client type
         for(const accessRight of accessRightForService[userType]) {
-            let savedAccessPrivilege = await accessPrivilegesByClientTypeModel.save(savedUserType.id, accessRight)
+            await accessPrivilegesByClientTypeModel.save(savedUserType.id, accessRight)
+        }
+
+        // Saving the client as a new user
+        for(const client of clients) {
+            if(client.type === userType) {
+                await userModel.save(
+                    client.name.toString(),
+                    client.user.toString(),
+                    client.password.toString(),
+                    userConstants.USER_TYPE_CLIENT
+                );
+            }
         }
     }
 }
