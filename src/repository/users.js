@@ -25,7 +25,7 @@ module.exports = User.init({
     },
     accessType: {
         field: 'access_type',
-        type: Sequelize.ENUM('master', 'service'),
+        type: Sequelize.ENUM('master', 'service', 'client'),
     },
     status: {
         field: 'status',

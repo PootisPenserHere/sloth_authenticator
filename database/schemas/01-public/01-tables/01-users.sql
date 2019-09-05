@@ -2,7 +2,7 @@ CREATE SEQUENCE public.users_id;
 
 CREATE TYPE public.users_status AS ENUM ('active', 'inactive');
 
-CREATE TYPE public.users_types AS ENUM ('master', 'service');
+CREATE TYPE public.users_types AS ENUM ('master', 'service', 'client');
 
 CREATE TABLE public.users (
     id INTEGER NOT NULL DEFAULT nextval('public.users_id'::regclass),
