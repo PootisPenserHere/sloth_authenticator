@@ -8,6 +8,7 @@
  */
 
 const userModel = require('../model/user');
+const clientModel = require('../model/client');
 const clientTypesByServiceModel = require('../model/clientTypesByService');
 const accessPrivilegesByClientTypeModel = require('../model/accessPrivilegesByClientType');
 const userConstants = require('../domain/constant/user');
@@ -43,22 +44,24 @@ async function readConfigFile() {
 async function configureService(idService, clientTypes, accessRightForService = null, clients = null) {
     // Save each of the client types for the service
     for(const clientType of clientTypes) {
-        let savedUserType = await clientTypesByServiceModel.save(idService, clientType.toString());
+        let savedClientType = await clientTypesByServiceModel.save(idService, clientType.toString());
 
         // Save the access rights for the client type
         for(const accessRight of accessRightForService[clientType]) {
-            await accessPrivilegesByClientTypeModel.save(savedUserType.id, accessRight)
+            await accessPrivilegesByClientTypeModel.save(savedClientType.id, accessRight)
         }
 
         // Saving the client as a new user
         for(const client of clients) {
             if(client.type === clientType) {
-                await userModel.save(
+                let clientData = await userModel.save(
                     client.name.toString(),
                     client.user.toString(),
                     client.password.toString(),
                     userConstants.USER_TYPE_CLIENT
                 );
+
+                await clientModel.save(clientData.id, savedClientType.id);
             }
         }
     }
