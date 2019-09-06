@@ -17,6 +17,8 @@ before_install:
 - echo Entering before install stage ...
 - sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass '123abc456'
 - psql -c 'create database travis_ci_test;' -U postgres
+- sudo mkdir /authenticator-init
+- sudo cp ci/config.yml /authenticator-init
 
 install:
 - echo Entering install stage ...

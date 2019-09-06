@@ -11,6 +11,7 @@ services:
     command: ./node_modules/.bin/nodemon --ignore logs/ index.js
     volumes:
       - .:/usr/src/app
+      - ./ci:/authenticator-init
       - /usr/src/app/node_modules
     depends_on:
       - postgres

@@ -30,6 +30,7 @@ const logger = winston.createLogger({
     format: winston.format(jsonFormatter)(),
     transports: [
         new winston.transports.DailyRotateFile({
+            level: process.env.DEV_MODE === 'true' ? 'debug' : 'info',
             filename: "sloth_authenticator-%DATE%.log.json",
             datePattern: "YYYY-MM-DD",
             dirname: "logs",
@@ -42,7 +43,8 @@ const logger = winston.createLogger({
 // If DEV_MODE is enabled the basic logger output will also be pipped to consoles
 if (process.env.DEV_MODE === 'true') {
     logger.add(new winston.transports.Console({
-        format: winston.format.simple()
+        format: winston.format.simple(),
+        level: process.env.DEV_MODE === 'true' ? 'debug' : 'info'
     }));
 }
 
