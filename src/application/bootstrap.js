@@ -23,7 +23,7 @@ const fileService = require('../service/file');
  *
  * @function
  * @name readConfigFile
- * @returns {Promise<*>}
+ * @returns {Promise<{service: [{name: string,user: string,password: string}],clientTypes: {string: [string]},accessPrivilegesPerClientType: {string: {string: [string]}},clients: {string: [{name: string,user: string,password: string,type: string}]}}>}
  */
 async function readConfigFile() {
     let configFile = await fileService.readFile('/authenticator-init/config.yml');
