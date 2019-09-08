@@ -8,7 +8,7 @@
  */
 
 const clientTypesByServiceRepository = require('../repository/clientTypesByService');
-const clientTypesPerServiceConstants = require('../domain/constant/clientTypesPerService');
+const clientTypesByServiceConstants = require('../domain/constant/clientTypesByService');
 
 /**
  * Saves a new client type for a specified service user

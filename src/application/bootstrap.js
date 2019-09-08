@@ -58,7 +58,7 @@ async function configureService(idService, clientTypes, accessRightForService = 
                     client.name.toString(),
                     client.user.toString(),
                     client.password.toString(),
-                    userConstants.USER_TYPE_CLIENT
+                    userConstants.TYPE_CLIENT
                 );
 
                 await clientModel.save(clientData.id, savedClientType.id);
@@ -83,7 +83,7 @@ async function initializeServices() {
             service.name.toString(),
             service.user.toString(),
             service.password.toString(),
-            userConstants.USER_TYPE_SERVICE
+            userConstants.TYPE_SERVICE
         );
 
         await configureService(
@@ -116,7 +116,7 @@ async function initializeUsers() {
             'Master user',
             masterUser,
             masterPassword,
-            userConstants.USER_TYPE_MASTER
+            userConstants.TYPE_MASTER
         );
 
         /*

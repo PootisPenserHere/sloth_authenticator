@@ -1,7 +1,9 @@
 "use strict";
 
 const Sequelize = require('sequelize');
+
 const postgresService = require('../service/postgres');
+const userConstants = require('../domain/constant/user');
 
 /* istanbul ignore next */
 class User extends Sequelize.Model {}
@@ -25,11 +27,11 @@ module.exports = User.init({
     },
     accessType: {
         field: 'access_type',
-        type: Sequelize.ENUM('master', 'service', 'client'),
+        type: Sequelize.ENUM(userConstants.TYPE_MASTER, userConstants.TYPE_SERVICE, userConstants.TYPE_CLIENT),
     },
     status: {
         field: 'status',
-        type: Sequelize.ENUM('active', 'inactive'),
+        type: Sequelize.ENUM(userConstants.STATUS_ACTIVE, userConstants.STATUS_INACTIVE),
     },
 }, {
     sequelize: postgresService.connection,
