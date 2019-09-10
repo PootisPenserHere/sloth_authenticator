@@ -2,6 +2,7 @@
 
 const Sequelize = require('sequelize');
 const postgresService = require('../service/postgres');
+const accessPrivilegesByClientTypeConstants = require('../domain/constant/accessPrivilegesByClientType');
 
 /* istanbul ignore next */
 class accessPrivilegesByClientType extends Sequelize.Model {}
@@ -21,7 +22,8 @@ module.exports = accessPrivilegesByClientType.init({
     },
     status: {
         field: 'status',
-        type: Sequelize.ENUM('active', 'inactive'),
+        type: Sequelize.ENUM(accessPrivilegesByClientTypeConstants.STATUS_ACTIVE,
+            accessPrivilegesByClientTypeConstants.STATUS_INACTIVE),
     },
 }, {
     sequelize: postgresService.connection,

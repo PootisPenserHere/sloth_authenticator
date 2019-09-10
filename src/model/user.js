@@ -23,7 +23,7 @@ const cryptoService = require('../service/crypto');
 async function numberOfExistingMasterUsers() {
     let response = await usersRepository.findAndCountAll({
         where: {
-            accessType: userConstants.USER_TYPE_MASTER
+            accessType: userConstants.TYPE_MASTER
         }
     });
 

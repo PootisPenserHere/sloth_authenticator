@@ -2,3 +2,4 @@ version: "2"
 exclude_patterns:
 - "**/test/"
 - "index.js"
+- "src/repository/"

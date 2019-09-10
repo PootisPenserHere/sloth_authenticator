@@ -2,6 +2,7 @@
 
 const Sequelize = require('sequelize');
 const postgresService = require('../service/postgres');
+const clientConstants = require('../domain/constant/client');
 
 /* istanbul ignore next */
 class Client extends Sequelize.Model {}
@@ -21,7 +22,7 @@ module.exports = Client.init({
     },
     status: {
         field: 'status',
-        type: Sequelize.ENUM('active', 'inactive'),
+        type: Sequelize.ENUM(clientConstants.STATUS_ACTIVE, clientConstants.STATUS_INACTIVE),
     },
 }, {
     sequelize: postgresService.connection,
