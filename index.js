@@ -5,11 +5,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const asyncHandler = require('express-async-handler');
 const cors = require('cors');
-const url = require('url');
 const mung = require('express-mung');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
 const requestIdGeneratorMiddleware = require('./src/middleware/requestIdGenerator');
+const { logEntryRoute } = require("./src/middleware/logEntryRoute");
 const clientApplication = require('./src/application/client');
 const bootstrapApplication = require('./src/application/bootstrap');
 const loggerService = require('./src/service/logger');
@@ -34,6 +34,11 @@ app.use(requestIdGeneratorMiddleware.httpContext);
 app.use(requestIdGeneratorMiddleware.assignIdToIncomingRequest);
 
 /*
+ * Saves the request route to the logger
+ */
+app.use(logEntryRoute);
+
+/*
  * Reads the status sent as string in the json response and changes the http status
  * to 500 if the current code is 200
  */
@@ -51,7 +56,6 @@ app.get('/',  asyncHandler(async (req, res, next) => {
  * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
  */
 app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
-    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.signSyncToken(req.body.payload, req.body.expirationTime) );
 }));
 
@@ -62,7 +66,6 @@ app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
  * @param {string} token The jwt to be validated
  */
 app.post('/api/sync/decode',  asyncHandler(async (req, res, next) => {
-    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.verifyToken(req.body.token) );
 }));
 
@@ -74,7 +77,6 @@ app.post('/api/sync/decode',  asyncHandler(async (req, res, next) => {
  * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
  */
 app.post('/api/async/sign',  asyncHandler(async (req, res, next) => {
-    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.signAsyncToken(req.body.payload, req.body.expirationTime) );
 }));
 
@@ -85,7 +87,6 @@ app.post('/api/async/sign',  asyncHandler(async (req, res, next) => {
  * @param {string} token The jwt to be validated
  */
 app.post('/api/async/decode',  asyncHandler(async (req, res, next) => {
-    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.verifyToken(req.body.token) );
 }));
 
@@ -98,7 +99,6 @@ app.post('/api/async/decode',  asyncHandler(async (req, res, next) => {
  * @returns {Promise<{status: string, message: string}>}
  */
 app.post('/api/revoke',  asyncHandler(async (req, res, next) => {
-    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.revokeToken(req.body.token) );
 }));
 
