@@ -11,6 +11,7 @@ const mung = require('express-mung');
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
 const requestIdGeneratorMiddleware = require('./src/middleware/requestIdGenerator');
 const clientApplication = require('./src/application/client');
+const userApplication = require('./src/application/user');
 const bootstrapApplication = require('./src/application/bootstrap');
 const loggerService = require('./src/service/logger');
 
@@ -100,6 +101,11 @@ app.post('/api/async/decode',  asyncHandler(async (req, res, next) => {
 app.post('/api/revoke',  asyncHandler(async (req, res, next) => {
     loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
     res.send( await clientApplication.revokeToken(req.body.token) );
+}));
+
+app.post('/api/auth/login',  asyncHandler(async (req, res, next) => {
+    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
+    res.send( await userApplication.login(req.body.username, req.body.password) );
 }));
 
 /*

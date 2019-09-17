@@ -11,6 +11,7 @@
 const usersRepository = require('../repository/users');
 const userConstants = require('../domain/constant/user');
 const cryptoService = require('../service/crypto');
+const loggerService = require('../service/logger');
 
 /**
  * Counts the total number of master users existing in the users table
@@ -53,5 +54,25 @@ async function save(name, username, plaintextPassword, accessType) {
         .save();
 }
 
+async function verifyCredentials(username, plainTextPassword) {
+    let response = false;
+
+    try {
+        let userData = await usersRepository.findOne({
+            where: {
+                username: username
+            }
+        });
+
+        response = cryptoService.verifyHashedPassword(plainTextPassword, userData.password)
+    } catch(err) {
+        loggerService.logger.info(`unable to verify the user ${username} at userModel.login`)
+    } finally {
+        return response
+    }
+
+}
+
 module.exports.numberOfExistingMasterUsers = numberOfExistingMasterUsers;
 module.exports.save = save;
+module.exports.verifyCredentials = verifyCredentials;
