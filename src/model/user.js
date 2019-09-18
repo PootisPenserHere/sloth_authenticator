@@ -45,7 +45,7 @@ async function numberOfExistingMasterUsers() {
 async function save(name, username, plaintextPassword, accessType) {
     let securedMasterPassword = await cryptoService.hashPassword(plaintextPassword);
 
-    return await usersRepository.build({
+    return usersRepository.build({
         name: name,
         username: username,
         password: securedMasterPassword,
@@ -54,6 +54,15 @@ async function save(name, username, plaintextPassword, accessType) {
         .save();
 }
 
+/**
+ * Takes the credentials from a user attempting to log in and compare to those stored in the database
+ *
+ * @function
+ * @name verifyCredentials
+ * @param {string} username The username of the user trying to login
+ * @param {string} plainTextPassword The password of the user in plain text
+ * @returns {Promise<boolean>}
+ */
 async function verifyCredentials(username, plainTextPassword) {
     let response = false;
 
@@ -68,6 +77,7 @@ async function verifyCredentials(username, plainTextPassword) {
     } catch(err) {
         loggerService.logger.info(`unable to verify the user ${username} at userModel.login`)
     } finally {
+        // The response is sent regardless of error to let the client know that the credentials are invalid
         return response
     }
 
