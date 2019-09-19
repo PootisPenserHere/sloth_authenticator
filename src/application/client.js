@@ -8,7 +8,7 @@
 
 const assert = require('chai').assert;
 
-const jwtModel = require('../service/jwt');
+const jwrService = require('../service/jwt');
 const blacklistModel = require('../model/blacklist');
 const fileService = require('../service/file');
 const loggerService = require('../service/logger');
@@ -28,7 +28,7 @@ async function signSyncToken(payload = {}, expirationTime = 0) {
 
     try {
         return {
-            "token": await jwtModel.signNewToken(process.env.JWT_SECONDARY_SECRET, payload, expirationTime),
+            "token": await jwrService.signNewToken(process.env.JWT_SECONDARY_SECRET, payload, expirationTime),
             "status": "success",
             "message": "Token created successfully."
         }
@@ -70,7 +70,7 @@ async function signAsyncToken(payload = {}, expirationTime = 0) {
         }
 
         return {
-            "token": await jwtModel.signNewToken(cert, payload, expirationTime),
+            "token": await jwrService.signNewToken(cert, payload, expirationTime),
             "status": "success",
             "message": "Token created successfully."
         }
@@ -97,7 +97,7 @@ async function decodeToken(token) {
     await assert.isNotNull(token, "The token shouldn't be null");
     await assert.isNotEmpty(token, "The token shouldn't be empty");
 
-    let decodedToken = await jwtModel.decodeToken(token);
+    let decodedToken = await jwrService.decodeToken(token);
     let tokenPayload;
 
     /*
@@ -109,10 +109,10 @@ async function decodeToken(token) {
      * a part of their name, in this case looking for a match of the sync algorithm hs
      */
     if(decodedToken.header.alg.indexOf("HS") > -1) {
-        tokenPayload = await jwtModel.verifyToken(token, process.env.JWT_SECONDARY_SECRET)
+        tokenPayload = await jwrService.verifyToken(token, process.env.JWT_SECONDARY_SECRET)
     } else{
         let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
-        tokenPayload = await jwtModel.verifyToken(token, cert);
+        tokenPayload = await jwrService.verifyToken(token, cert);
     }
 
     return tokenPayload;
