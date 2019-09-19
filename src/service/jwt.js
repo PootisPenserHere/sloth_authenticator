@@ -1,14 +1,14 @@
 "use strict";
 
 /**
- * Model that exposes the underlying logic to sign and verify tokens
+ * Service containing the underlying logic to do basic operations with jwt
  *
- * @module jwtModel
+ * @module jwtService
  */
 
 const jwt = require('jsonwebtoken');
-const crytoService = require('../service/crypto');
-const loggerService = require('../service/logger');
+const crytoService = require('./crypto');
+const loggerService = require('./logger');
 
 /**
  * Creates a new jwt signed either a sync or async algorithm which will be determined based on the
@@ -72,7 +72,7 @@ async function decodeToken(token) {
         return await jwt.decode(token, {complete: true});
     } catch(err) {
         loggerService.logger.error(err);
-        throw Error("The token is invalid, please login again.");
+        throw Error("The token is invalid");
     }
 }
 

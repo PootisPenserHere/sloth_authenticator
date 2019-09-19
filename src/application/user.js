@@ -8,7 +8,7 @@
  */
 
 const userModel = require('../model/user');
-const jwtModel = require('../model/jwt');
+const jwtModel = require('../service/jwt');
 
 async function login(username, plainTextPassword) {
     let credentialsValidity = await userModel.verifyCredentials(username, plainTextPassword);

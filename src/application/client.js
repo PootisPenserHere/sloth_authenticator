@@ -8,7 +8,7 @@
 
 const assert = require('chai').assert;
 
-const jwtModel = require('../model/jwt');
+const jwtModel = require('../service/jwt');
 const blacklistModel = require('../model/blacklist');
 const fileService = require('../service/file');
 const loggerService = require('../service/logger');
