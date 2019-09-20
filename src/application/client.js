@@ -9,6 +9,7 @@
 const assert = require('chai').assert;
 
 const jwrService = require('../service/jwt');
+const jwrModel = require('../model/jwt');
 const blacklistModel = require('../model/blacklist');
 const fileService = require('../service/file');
 const loggerService = require('../service/logger');
@@ -84,41 +85,6 @@ async function signAsyncToken(payload = {}, expirationTime = 0) {
 }
 
 /**
- * Will decode a jwt regardless of the signature strategy and return its payload on
- * success
- *
- * @function
- * @name decodeToken
- * @param {string} token The jwt to be verified
- * @returns {Promise<{iat: int, exp: int, iss: string, jti: string}>}
- * @throws {JsonWebTokenError|NotBeforeError|TokenExpiredError}
- */
-async function decodeToken(token) {
-    await assert.isNotNull(token, "The token shouldn't be null");
-    await assert.isNotEmpty(token, "The token shouldn't be empty");
-
-    let decodedToken = await jwrService.decodeToken(token);
-    let tokenPayload;
-
-    /*
-     * The tokens are verified based on their signature type this is done to determine
-     * if the token sent is still valid to the system and avoid precessing the ones
-     * that have already expired or have the wrong signature
-     *
-     * As there are different versions of the used algorithms they're validated against
-     * a part of their name, in this case looking for a match of the sync algorithm hs
-     */
-    if(decodedToken.header.alg.indexOf("HS") > -1) {
-        tokenPayload = await jwrService.verifyToken(token, process.env.JWT_SECONDARY_SECRET)
-    } else{
-        let cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PUBLIC_KEY);
-        tokenPayload = await jwrService.verifyToken(token, cert);
-    }
-
-    return tokenPayload;
-}
-
-/**
  * Decodes and verify the integrity of the signature of tokens be it sync or async and returns
  * a output to be passed to the response body
  *
@@ -132,17 +98,8 @@ async function verifyToken(token) {
     await assert.isNotEmpty(token, "The token shouldn't be empty");
 
     try {
-        let decodedToken = await decodeToken(token);
-
-        if(!decodedToken || await blacklistModel.lookUpByJti(decodedToken.jti)) {
-            return {
-                "status": "error",
-                "message": "The token is invalid."
-            }
-        }
-
         return {
-            "payload": decodedToken,
+            "payload": await jwrModel.verifyToken(token),
             "status": "success",
             "message": "The token is valid."
         }

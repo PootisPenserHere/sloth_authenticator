@@ -47,7 +47,7 @@ async function signNewToken(secret, payload = {}, expirationTimeInSeconds = 0) {
  * @function
  * @name verifyAsyncToken
  * @param {string} token A jwt to be verified
- * @param {string|Buffer} secret To be used to verify the signature, a RSA cert for async tokens or a passphrase for sync tokens
+ * @param {string|buffer} secret To be used to verify the signature, a RSA cert for async tokens or a passphrase for sync tokens
  * @returns {Promise<{iat: int, exp: int, iss: string, jti: string}>}
  */
 async function verifyToken(token, secret) {
