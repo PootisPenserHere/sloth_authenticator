@@ -8,10 +8,8 @@
 
 const assert = require('chai').assert;
 
-const jwrService = require('../service/jwt');
 const jwtModel = require('../model/jwt');
 const blacklistModel = require('../model/blacklist');
-const fileService = require('../service/file');
 const loggerService = require('../service/logger');
 
 /**
