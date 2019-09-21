@@ -84,23 +84,14 @@ async function revokeToken(token) {
     await assert.isNotEmpty(token, "The token shouldn't be empty");
 
     try {
-        let decodedToken = await jwtModel.decodeToken(token);
-
-        if(await blacklistModel.lookUpByJti(decodedToken.jti)) {
-            return {
-                "status": "error",
-                "message": "The token is already blocked."
-            }
-        }
-
-        await blacklistModel.blockTokenByJti(decodedToken.jti, decodedToken.exp);
+        await blacklistModel.revokeToken(token);
 
         return {
             "status": "success",
             "message": "The token has been added to the blacklist."
         }
     } catch (err) {
-        loggerService.logger.error(`error at clientApplication.decodeSyncToken caused by ${err}`);
+        loggerService.logger.error(`error at clientApplication.revokeToken caused by ${err}`);
         return {
             "status": "error",
             "message": "The token is invalid."
