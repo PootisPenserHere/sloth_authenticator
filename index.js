@@ -53,7 +53,7 @@ app.get('/',  asyncHandler(async (req, res, next) => {
  */
 app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
     loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
-    res.send( await clientApplication.signSyncToken(req.body.payload, req.body.expirationTime) );
+    res.send( await clientApplication.newToken(req.body.payload, "sync", req.body.expirationTime) );
 }));
 
 /**
@@ -76,7 +76,7 @@ app.post('/api/sync/decode',  asyncHandler(async (req, res, next) => {
  */
 app.post('/api/async/sign',  asyncHandler(async (req, res, next) => {
     loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
-    res.send( await clientApplication.signAsyncToken(req.body.payload, req.body.expirationTime) );
+    res.send( await clientApplication.newToken(req.body.payload, "async", req.body.expirationTime) );
 }));
 
 /**

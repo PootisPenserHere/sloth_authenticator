@@ -9,74 +9,33 @@
 const assert = require('chai').assert;
 
 const jwrService = require('../service/jwt');
-const jwrModel = require('../model/jwt');
+const jwtModel = require('../model/jwt');
 const blacklistModel = require('../model/blacklist');
 const fileService = require('../service/file');
 const loggerService = require('../service/logger');
 
 /**
- * New sync token signing to be used by client applications
+ * Signs a new token according to the desired signature type
  *
  * @function
- * @name signSyncToken
+ * @name newToken
  * @param {object} [payload] Contains any data that will be added to the token's payload
+ * @param {string} signatureType Either async or sync to define the type of algorithm used to sign the token
  * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
  * @returns {Promise<{token: string, status: string, message, string}|{status: string, message, string}>}
  */
-async function signSyncToken(payload = {}, expirationTime = 0) {
+async function newToken(payload = {}, signatureType, expirationTime = 0) {
     await assert.isNotNull(payload, "The payload shouldn't be null");
     await assert.isAtLeast(expirationTime, 0, "The expirationTime must be set to 0 or higher");
 
     try {
         return {
-            "token": await jwrService.signNewToken(process.env.JWT_SECONDARY_SECRET, payload, expirationTime),
+            "token": await jwtModel.signNewToken(payload, signatureType, expirationTime),
             "status": "success",
             "message": "Token created successfully."
         }
     } catch (err) {
-        loggerService.logger.error(`error at clientApplication.signSyncToken caused by ${err}`);
-        return {
-            "status": "error",
-            "message": "There was an error creating the token, if the problem persist contact the system administrator."
-        }
-    }
-}
-
-/**
- * New async token signing to be used by client applications
- *
- * @function
- * @name signAsyncToken
- * @param {object} [payload] Contains any data that will be added to the token's payload
- * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
- * @returns {Promise<{token: string, status: string, message, string}|{status: string, message, string}>}
- */
-async function signAsyncToken(payload = {}, expirationTime = 0) {
-    await assert.isNotNull(payload, "The payload shouldn't be null");
-    await assert.isAtLeast(expirationTime, 0, "The expirationTime must be set to 0 or higher");
-
-    try {
-        /*
-         * If the rsa key has been encrypted the sign method will take the key and its passphrase
-         * as an object
-         */
-        let cert; // TODO add a verification to check that the file's contents are a valid private key
-        if(process.env.JWR_SECONDARY_RSA_KEY_PASSWORD) {
-            cert = {
-                'key': await fileService.readFile(process.env.JWT_SECONDARY_RSA_PRIVATE_KEY),
-                'passphrase': process.env.JWR_SECONDARY_RSA_KEY_PASSWORD
-            }
-        } else {
-            cert = await fileService.readFile(process.env.JWT_SECONDARY_RSA_PRIVATE_KEY)
-        }
-
-        return {
-            "token": await jwrService.signNewToken(cert, payload, expirationTime),
-            "status": "success",
-            "message": "Token created successfully."
-        }
-    } catch (err) {
-        loggerService.logger.error(`error at clientApplication.signAsyncToken caused by ${err}`);
+        loggerService.logger.error(`error at clientApplication.newToken caused by ${err}`);
         return {
             "status": "error",
             "message": "There was an error creating the token, if the problem persist contact the system administrator."
@@ -99,7 +58,7 @@ async function verifyToken(token) {
 
     try {
         return {
-            "payload": await jwrModel.verifyToken(token),
+            "payload": await jwtModel.verifyToken(token),
             "status": "success",
             "message": "The token is valid."
         }
@@ -127,7 +86,7 @@ async function revokeToken(token) {
     await assert.isNotEmpty(token, "The token shouldn't be empty");
 
     try {
-        let decodedToken = await decodeToken(token);
+        let decodedToken = await jwtModel.decodeToken(token);
 
         if(await blacklistModel.lookUpByJti(decodedToken.jti)) {
             return {
@@ -151,7 +110,6 @@ async function revokeToken(token) {
     }
 }
 
-module.exports.signSyncToken = signSyncToken;
+module.exports.newToken = newToken;
 module.exports.verifyToken = verifyToken;
-module.exports.signAsyncToken = signAsyncToken;
 module.exports.revokeToken = revokeToken;
