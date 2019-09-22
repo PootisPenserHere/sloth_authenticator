@@ -8,7 +8,7 @@
  */
 
 const userModel = require('../model/user');
-const jwrService = require('../service/jwt');
+const jwtModel = require('../model/jwt');
 
 async function login(username, plainTextPassword) {
     let credentialsValidity = await userModel.verifyCredentials(username, plainTextPassword);
@@ -22,7 +22,12 @@ async function login(username, plainTextPassword) {
             "one": 1
         };
 
-        response.token = await jwrService.signNewToken(process.env.JWT_SECONDARY_SECRET, payload);
+        response.token = await jwtModel.signNewToken(
+            payload,
+            process.env.JWT_LOGIN_TOKEN_ALGORITHM,
+            parseInt(process.env.JWT_DEFAULT_SESSION_TIME)
+        );
+
         response.status = "success";
         response.message = "Login successful.";
     } else {
