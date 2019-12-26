@@ -108,6 +108,12 @@ app.post('/api/auth/login',  asyncHandler(async (req, res, next) => {
     res.send( await userApplication.login(req.body.username, req.body.password) );
 }));
 
+app.post('/api/auth/logout',  asyncHandler(async (req, res, next) => {
+    loggerService.logger.info(`accessing the route ${url.parse(req.url).pathname} with the verb ${req.method}`);
+    // TODO taken the token from headers
+    res.send( await userApplication.logout(req.body.token));
+}));
+
 /*
  * Catches any exception that wasn't properly handled by the other processes and returns the user
  * a generic response while logging the error
