@@ -5,7 +5,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const asyncHandler = require('express-async-handler');
 const cors = require('cors');
-const url = require('url');
 const mung = require('express-mung');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
