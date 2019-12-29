@@ -9,6 +9,7 @@ const mung = require('express-mung');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
 const requestIdGeneratorMiddleware = require('./src/middleware/requestIdGenerator');
+const { tokenValidator, handledValidationError, scopeChecker, handledNoPermissionsError } = require("./src/middleware/tokenValidation");
 const { logEntryRoute } = require("./src/middleware/logEntryRoute");
 const clientApplication = require('./src/application/client');
 const userApplication = require('./src/application/user');
@@ -39,14 +40,20 @@ app.use(requestIdGeneratorMiddleware.assignIdToIncomingRequest);
  */
 app.use(logEntryRoute);
 
+/**
+ * Handling authenticated requests with jwt
+ */
+app.use(tokenValidator);
+app.use(handledValidationError);
+
 /*
  * Reads the status sent as string in the json response and changes the http status
  * to 500 if the current code is 200
  */
 app.use(mung.json(genericErrorHandling.handledErrorReturnCode500));
 
-app.get('/',  asyncHandler(async (req, res, next) => {
-    res.send("sloth_authenticator");
+app.get('/health-check',  asyncHandler(async (req, res, next) => {
+    res.send("Process running");
 }));
 
 /**
@@ -111,6 +118,13 @@ app.post('/api/auth/logout',  asyncHandler(async (req, res, next) => {
     // TODO taken the token from headers
     res.send( await userApplication.logout(req.body.token));
 }));
+
+/*
+ * Catches the errors if a user tries to access a protected route
+ *
+ * Note: this middleware must be loaded after defining the protected routes
+ */
+app.use(handledNoPermissionsError);
 
 /*
  * Catches any exception that wasn't properly handled by the other processes and returns the user

@@ -1,19 +1,28 @@
 "use strict";
 
 const jwt = require('express-jwt');
-const guard = require('express-jwt-permissions')();
+const scopeChecker = require('express-jwt-permissions')();
 const loggerService = require('../service/logger');
+
+/**
+ * Middleware to validate and control the access right to the routes of this api
+ *
+ * @module TokenValidation
+ */
+
 
 /**
  * Validates the received jwt against the standard requirements
  */
-const auth = jwt({
+const tokenValidator = jwt({
     credentialsRequired: true,
-    secret: process.env.TOKEN_SECRET,
+    // TODO validate async token
+    // TODO adjust for master and secondary secrets
+    secret: process.env.JWT_SECONDARY_SECRET,
     requestProperty: 'user',
     getToken: function fromHeaderOrQuerystring (req) {
-        loggerService.logger.debug(req.headers);
-        loggerService.logger.debug(req.query);
+        loggerService.logger.debug(JSON.stringify(req.headers));
+        loggerService.logger.debug(JSON.stringify(req.query));
         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
             return req.headers.authorization.split(' ')[1];
         } else if (req.query && req.query.token) {
@@ -24,7 +33,7 @@ const auth = jwt({
 })
     .unless({
         path: [
-            '/api/auth'
+            '/health-check'
         ]
     });
 
@@ -56,10 +65,6 @@ function handledValidationError (err, req, res, next) {
 function handledNoPermissionsError (err, req, res, next) {
     // If the user has a token that is readable but invalid
     if (err.code === 'permission_denied') {
-        let errorMessage = "unauthorized access to the route " + req.route.path + " with the verb " +
-            req.route.stack[0].method + " idu_usuario: " + req.user.idu_usuario;
-        loggerService.logger.warn(errorMessage);
-
         res.status(403).send({
             "status": "error",
             "message": "Forbidden"
@@ -84,7 +89,7 @@ function handledNoPermissionsError (err, req, res, next) {
     next();
 }
 
-module.exports.auth = auth;
+module.exports.tokenValidator = tokenValidator;
 module.exports.handledValidationError = handledValidationError;
-module.exports.guard = guard;
-module.exports.handledNoPermisionsError = handledNoPermissionsError;
+module.exports.scopeChecker = scopeChecker;
+module.exports.handledNoPermissionsError = handledNoPermissionsError;

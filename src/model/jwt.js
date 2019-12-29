@@ -23,6 +23,7 @@ const blacklistModel = require('./blacklist');
  * @returns {Promise<{token: string, status: string, message, string}|{status: string, message, string}>}
  */
 async function signNewToken(payload = {}, signatureType,  expirationTime = 0) {
+    // TODO add option for master and secondary signature secrets
     await assert.isNotNull(payload, "The payload shouldn't be null");
     await assert.isAtLeast(expirationTime, 0, "The expirationTime must be set to 0 or higher");
 
