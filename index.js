@@ -9,8 +9,10 @@ const mung = require('express-mung');
 
 const genericErrorHandling = require('./src/middleware/genericErrorHandler');
 const requestIdGeneratorMiddleware = require('./src/middleware/requestIdGenerator');
+const { tokenValidator, handledValidationError, scopeChecker, handledNoPermissionsError } = require("./src/middleware/tokenValidation");
 const { logEntryRoute } = require("./src/middleware/logEntryRoute");
 const clientApplication = require('./src/application/client');
+const userApplication = require('./src/application/user');
 const bootstrapApplication = require('./src/application/bootstrap');
 const loggerService = require('./src/service/logger');
 
@@ -38,14 +40,20 @@ app.use(requestIdGeneratorMiddleware.assignIdToIncomingRequest);
  */
 app.use(logEntryRoute);
 
+/**
+ * Handling authenticated requests with jwt
+ */
+app.use(tokenValidator);
+app.use(handledValidationError);
+
 /*
  * Reads the status sent as string in the json response and changes the http status
  * to 500 if the current code is 200
  */
 app.use(mung.json(genericErrorHandling.handledErrorReturnCode500));
 
-app.get('/',  asyncHandler(async (req, res, next) => {
-    res.send("sloth_authenticator");
+app.get('/health-check',  asyncHandler(async (req, res, next) => {
+    res.send("Process running");
 }));
 
 /**
@@ -56,7 +64,7 @@ app.get('/',  asyncHandler(async (req, res, next) => {
  * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
  */
 app.post('/api/sync/sign',  asyncHandler(async (req, res, next) => {
-    res.send( await clientApplication.signSyncToken(req.body.payload, req.body.expirationTime) );
+    res.send( await clientApplication.newToken(req.body.payload, "sync", req.body.expirationTime) );
 }));
 
 /**
@@ -77,7 +85,7 @@ app.post('/api/sync/decode',  asyncHandler(async (req, res, next) => {
  * @param {int} [expirationTime] Defines the expiration time of the token, if not sent the token won't have an expiration
  */
 app.post('/api/async/sign',  asyncHandler(async (req, res, next) => {
-    res.send( await clientApplication.signAsyncToken(req.body.payload, req.body.expirationTime) );
+    res.send( await clientApplication.newToken(req.body.payload, "async", req.body.expirationTime) );
 }));
 
 /**
@@ -101,6 +109,22 @@ app.post('/api/async/decode',  asyncHandler(async (req, res, next) => {
 app.post('/api/revoke',  asyncHandler(async (req, res, next) => {
     res.send( await clientApplication.revokeToken(req.body.token) );
 }));
+
+app.post('/api/auth/login',  asyncHandler(async (req, res, next) => {
+    res.send( await userApplication.login(req.body.username, req.body.password) );
+}));
+
+app.post('/api/auth/logout',  asyncHandler(async (req, res, next) => {
+    // TODO taken the token from headers
+    res.send( await userApplication.logout(req.body.token));
+}));
+
+/*
+ * Catches the errors if a user tries to access a protected route
+ *
+ * Note: this middleware must be loaded after defining the protected routes
+ */
+app.use(handledNoPermissionsError);
 
 /*
  * Catches any exception that wasn't properly handled by the other processes and returns the user

@@ -4,6 +4,13 @@ const url = require('url');
 const loggerService = require('../service/logger');
 
 /**
+ * Middleware to log the routes that are requested
+ *
+ * @module logEntryRoute
+ */
+
+
+/**
  * Saves the route that was called as well as the verb of the request to the log file
  *
  * @param req

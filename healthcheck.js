@@ -4,7 +4,7 @@ const http = require('http');
 const options = {
     host: '0.0.0.0',
     port: process.env.APP_PORT,
-    path: '/',
+    path: '/health-check',
     method: 'GET',
     timeout: 2000
 };

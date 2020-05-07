@@ -11,6 +11,7 @@ const assert = require('chai').assert;
 const redisService = require('../service/redis');
 const dateService = require('../service/date');
 const loggerService = require('../service/logger');
+const jwtModel = require('./jwt');
 
 /**
  * Generates a unique and repeatable string based on the token id to reference the token
@@ -61,5 +62,28 @@ async function blockTokenByJti(jti, exp) {
     );
 }
 
+/**
+ * Add a token to the blacklist so that in further requests it won't be accepted as a
+ * valid token even if its attributes and signature are correct
+ *
+ * @function
+ * @name revokeToken
+ * @param {string} token The jwt to be blocked
+ * @returns {Promise<{status: string, message: string}>}
+ */
+async function revokeToken(token) {
+    await assert.isNotNull(token, "The token shouldn't be null");
+    await assert.isNotEmpty(token, "The token shouldn't be empty");
+
+        let decodedToken = await jwtModel.decodeToken(token);
+
+        // TODO create custom error for to distinguish between invalid token and already blocked tokken
+        if(await lookUpByJti(decodedToken.jti)) {
+            throw Error("The token is already blocked.");
+        }
+
+        await blockTokenByJti(decodedToken.jti, decodedToken.exp + 1);
+}
+
 module.exports.lookUpByJti = lookUpByJti;
-module.exports.blockTokenByJti = blockTokenByJti;
+module.exports.revokeToken = revokeToken;

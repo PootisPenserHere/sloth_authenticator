@@ -8,6 +8,9 @@ const userConstants = require('../domain/constant/user');
 /* istanbul ignore next */
 class User extends Sequelize.Model {}
 
+/**
+ * @throws TypeError
+ */
 module.exports = User.init({
     name: {
         field: 'name',
